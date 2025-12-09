@@ -2,10 +2,15 @@ import home from "../../assets/icons/home-icon.png";
 import hide from "../../assets/icons/icon_hide.png";
 import logout from "../../assets/icons/Icon-out.png";
 import excel from "../../assets/icons/excel-logo.png";
-import { Space, Table, Tag } from "antd";
+import { Button, Input, Space, Table, Tag } from "antd";
 import type { Ticket } from "../../interfaces/Schedules";
 import * as XLSX from "xlsx";
-
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 
 export default function UserManagers() {
   const { Column } = Table;
@@ -176,8 +181,14 @@ export default function UserManagers() {
         </div>
 
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
-        <div className="flex gap-4" onClick={ExportExcel}>
-          <div className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 h-10 justify-center">
+        <div className="flex gap-4 justify-between" >
+           <Input
+              prefix={<SearchOutlined />}
+              placeholder="Tìm kiếm..."
+              style={{ width: 250, padding: "8px 12px" }}
+            />
+          <div  className="flex gap-4">
+            <div onClick={ExportExcel} className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 h-10 justify-center">
             <img className="w-4 h-4" src={excel} alt="" />
             <p>Xuất file</p>
           </div>
@@ -201,6 +212,7 @@ export default function UserManagers() {
             <option value="">lọc theo giá</option>
             <option value="">Lọc theo mã</option>
           </select>
+          </div>
         </div>
 
         {/* bảng dữ liệu */}
@@ -255,9 +267,12 @@ export default function UserManagers() {
             key="action"
             render={(_, record: Ticket) => (
               <Space>
-               <button>Sửa</button>
-               <button>Xóa</button>
-
+                <Button icon={<DeleteOutlined />} danger type="link">
+                    
+                  </Button>
+              <Button icon={<EditOutlined />} danger type="link">
+                 
+                  </Button>
               </Space>
             )}
           />

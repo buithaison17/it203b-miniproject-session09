@@ -18,7 +18,7 @@ export default function NavLinks() {
 
       <div className="list-manager">
         <a className="dropdown-item"href="">Quản lý Người Dùng</a>
-        <a className="dropdown-item"href="">Quản lý Bến Xe</a>
+        <NavLink to="/admin/stations" className="dropdown-item">Quản lý Bến Xe</NavLink>
         <a className="dropdown-item"href="">Quản lý Nhà Xe</a>
         <a className="dropdown-item"href="">Quản lý Xe</a>
         <a className="dropdown-item"href="">Quản lý Ghế</a>
