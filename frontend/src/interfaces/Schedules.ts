@@ -13,6 +13,7 @@ export interface Schedules {
 
 export interface Ticket {
   id: string;
+  bus_id: string;
   schedule_id: string;
   seat_id: string;
   departure_time: Date;
