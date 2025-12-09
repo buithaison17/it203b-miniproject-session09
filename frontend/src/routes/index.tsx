@@ -7,6 +7,6 @@ export const routers = createBrowserRouter([
     {path: "/admin", element : <AdminManager/>,
         children : [
         {path: "order" , element : <OrderManager/>},
-        {path: "stations" , element : <StationManagers/>},
+        {path: "station" , element : <StationManagers/>},
     ]}
 ]);

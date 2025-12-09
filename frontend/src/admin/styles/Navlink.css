@@ -1,10 +1,20 @@
-.dashboard-left {
-    border-right: 2px solid rgb(228, 231, 236);
-    width: 250px;
-    height: calc(-46px + 100vh);
-    padding: 24px 1px;
+/* --- Reset box-sizing cho tất cả phần tử --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
+/* --- Sidebar chính --- */
+.dashboard-left {
+    width: 245px;
+    padding-left: 12px;
+    border-right: 2px solid rgb(228, 231, 236);
+    height: calc(100vh - 46px);
+    overflow-x: hidden; /* chặn scroll ngang */
+}
+
+/* --- Logo --- */
 .logo-project {
   height: 100px;
 }
@@ -12,10 +22,14 @@
 .logo-web {
   width: 60%;
 }
+
+/* --- Danh sách quản lý --- */
 .list-manager {
   display: flex;
   flex-direction: column;
 }
+
+/* --- Link chung --- */
 a {
   display: block;
   padding: 10px 12px;
@@ -26,59 +40,63 @@ a {
   position: relative;
 }
 
+/* --- Dropdown wrapper --- */
 .dropdown {
   position: relative;
 }
 
+/* --- Dropdown content --- */
 .dropdown-content {
-  max-height: 0;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin: 0 16px;
-  transition: all 0.3s ease;
-  opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin: 0; /* bỏ margin ngang */
+    padding: 0 8px;
+    width: 100%; /* không vượt sidebar */
+    transition: all 0.3s ease;
+    opacity: 0;
 }
 
+/* --- Dropdown mở --- */
 .dropdown.active .dropdown-content {
-  max-height: 200px;
-  opacity: 1;
-  margin-top: 4px;
+    max-height: 200px;
+    opacity: 1;
+    margin-top: 4px;
 }
 
+/* --- Item trong dropdown --- */
 .dropdown-item {
-  display: block;
-  padding: 12px 24px;
-  text-decoration: none;
-  color: #6b7280;
-  font-size: 16px;
-  transition: all 0.2s ease;
-  border-left: 2px solid transparent;
+    display: block;
+    padding: 12px 16px; /* giảm padding ngang */
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 16px;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .dropdown-item:hover {
-  background-color: #ffffff;
-  color: #932f08;
-  border-left: 2px solid #932f08;
-  padding-left: 26px;
+    padding-left: 18px; /* hover vẫn rõ */
+    background-color: #ffffff;
+    color: #932f08;
+    border-left: 2px solid #932f08;
 }
 
 .dropdown-item.active {
-  background-color: #ffffff;
-  color: #932f08;
-  border-left: 2px solid #932f08;
-  font-weight: 500;
+    background-color: #ffffff;
+    color: #932f08;
+    border-left: 2px solid #932f08;
+    font-weight: 500;
 }
 
+/* --- Mũi tên dropdown --- */
 .dropdown-arrow {
-  float: right;
-  font-size: 12px;
-  transition: transform 0.3s ease;
+    float: right;
+    font-size: 12px;
+    transition: transform 0.3s ease;
 }
 
 .dropdown.active .dropdown-arrow {
-  transform: rotate(90deg);
-}
-.dashboard-left{
-  padding-left: 12px;
+    transform: rotate(90deg);
 }

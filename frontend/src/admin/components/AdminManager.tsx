@@ -6,7 +6,7 @@ export default function AdminManager() {
   return (
     <div className="flex flex-row">
       <NavLink></NavLink>
-       <div className="content" style={{ flex: 1, padding: 20 }}>
+       <div className="content" style={{ flex: 1, padding: 25 }}>
         <Outlet />  
       </div>
     </div>
