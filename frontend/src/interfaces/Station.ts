@@ -1,7 +1,7 @@
 export interface Station {
   id: string;
   name: string;
-  image: String;
+  image: string;
   wallpaper: string;
   descriptions: string;
   location: string;
