@@ -3,4 +3,10 @@
   margin: 0;
   outline: 0;
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
 }
