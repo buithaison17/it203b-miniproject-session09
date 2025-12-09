@@ -1,0 +1,37 @@
+.dashboard-left {
+    border-right: 2px solid rgb(228, 231, 236);
+    width: 250px;
+    height: calc(-46px + 100vh);
+    padding: 24px 1px;
+}
+
+.logo-project {
+  height: 100px;
+}
+
+.logo-web {
+  width: 60%;
+}
+.list-manager {
+  display: flex;
+  flex-direction: column;
+}
+a {
+  display: block;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 400;
+  position: relative;
+}
+
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 0 16px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
