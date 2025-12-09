@@ -164,7 +164,7 @@ export default function UserManagers() {
 
           <img src={hide} className="rotate-90" alt="" />
 
-          <p className="font-both">Danh sách đơn vé</p>
+          <p className="font-both">Danh sách đơn vé...</p>
         </div>
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
