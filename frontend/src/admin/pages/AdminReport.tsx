@@ -372,7 +372,7 @@ export default function AdminReport() {
 
         {/* bảng dữ liệu */}
 
-        <div className="flex gap-5">
+        <div className="flex justify-around">
           <div className="w-100">
             <div>
               <Table<Ticket>
@@ -394,12 +394,11 @@ export default function AdminReport() {
                 />
               </Table>
             </div>
-             <div className="text-2xl">
+            <div className="text-2xl">
               {" "}
               Tổng Doanh thu : {TotalRevenue.toLocaleString("vi-VN")} VND
             </div>
           </div>
-
 
           <Table<Ticket> pagination={{ pageSize: 5 }} dataSource={filteredData}>
             <Column
@@ -408,24 +407,24 @@ export default function AdminReport() {
               render={(_, __, index) => index + 1}
             />
 
-            <Column title="Mã vé" dataIndex="id" key="id" />
-            <Column
-              title="Mã lịch trình"
-              dataIndex="schedule_id"
-              key="schedule_id"
-            />
-            <Column title="Ghế" dataIndex="seat_id" key="seat_id" />
+            <Column title="Tuyến " dataIndex="id" key="id" />
+            <Column title="Nhà xe" dataIndex="schedule_id" key="schedule_id" />
+            <Column title="Vé bán ra" dataIndex="seat_id" key="seat_id" />
 
-            
-            
             <Column
-              title="Ngày tạo"
+              title="Tỷ lệ hủy"
               dataIndex="created_at"
               key="created_at"
               render={(value: Date) => value.toLocaleString()}
             />
             <Column
-              title="Ngày cập nhật"
+              title="Đánh giá"
+              dataIndex="updated_at"
+              key="updated_at"
+              render={(value: Date) => value.toLocaleString()}
+            />
+            <Column
+              title="Doanh thu"
               dataIndex="updated_at"
               key="updated_at"
               render={(value: Date) => value.toLocaleString()}
@@ -436,17 +435,13 @@ export default function AdminReport() {
               render={(_, record: Ticket) => (
                 <Space>
                   <Button
-                    style={{ fontSize: "20px" }}
-                    icon={<DeleteOutlined />}
-                    danger
                     type="link"
-                  ></Button>
-                  <Button
-                    style={{ fontSize: "20px" }}
-                    icon={<EditOutlined />}
-                    danger
-                    type="link"
-                  ></Button>
+                    className="px-3 py-1 rounded-lg border border-gray-300 
+             text-gray-700 hover:bg-gray-200 
+             transition-all duration-200 shadow-sm"
+                  >
+                    Chi tiết
+                  </Button>
                 </Space>
               )}
             />

@@ -7,7 +7,8 @@
 
 /* --- Sidebar chính --- */
 .dashboard-left {
-    width: 245px;
+    min-width: 240px;
+    max-width: 240px;
     padding-left: 12px;
     border-right: 2px solid rgb(228, 231, 236);
     height: calc(100vh - 46px);
