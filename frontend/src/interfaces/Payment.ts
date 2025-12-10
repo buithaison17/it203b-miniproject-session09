@@ -1,6 +1,7 @@
 export interface PaymentProvider {
   id: string;
   name: string;
+  image: string;
   type: "card" | "e-wallet" | "bank_transfer" | "qr_code";
   api_endppoint: string;
   created_at: Date;
