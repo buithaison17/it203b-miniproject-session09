@@ -1,9 +1,13 @@
-import home from "../../assets/icons/home-icon.png";
-import hide from "../../assets/icons/icon_hide.png";
-import logout from "../../assets/icons/Icon-out.png";
-import excel from "../../assets/icons/excel-logo.png";
-import { Button, Input, Space, Table } from "antd";
-import type { Station } from "../../interfaces/Station";
+import { useState, useMemo, useEffect } from "react";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Tooltip,
+  Popconfirm,
+  message,
+} from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -12,107 +16,186 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-export default function StationManagers() {
-  const { Column } = Table;
-  const ExportExcel = () => {
-    const sheetData = data.map((item) => ({
-      ...item,
-    }));
+import { useAppSelector, useAppDispatch } from "../../stores/store";
+import {
+  fetchStationsThunk,
+  addStationThunk,
+  updateStationThunk,
+  deleteStationThunk,
+} from "../../slices/stationSlice";
+import type { Station } from "../../interfaces/Station"; // Tái sử dụng
+import StationModal from "../components/Modals/Stations/StationModal"; // Component Modal đã hoàn thiện
 
-    const worksheet = XLSX.utils.json_to_sheet(sheetData);
+import home from "../../assets/icons/home-icon.png";
+import hide from "../../assets/icons/icon_hide.png";
+import logout from "../../assets/icons/Icon-out.png";
+import excel from "../../assets/icons/excel-logo.png";
 
-    worksheet["!cols"] = Object.keys(sheetData[0]).map(() => ({ wch: 20 }));
+const { Column } = Table;
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
+const formatDateTime = (dateString: string): string => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "N/A"; // Xử lý trường hợp ngày không hợp lệ
+    return date.toLocaleString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (e) {
+    return "N/A";
+  }
+};
 
-    XLSX.writeFile(workbook, "danh_sach_ben_xe.xlsx");
+export default function StationManager() {
+  const dispatch = useAppDispatch();
+  const { stations, loading, error } = useAppSelector(
+    (state) => state.stations
+  );
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingStation, setEditingStation] = useState<Station | null>(null);
+  const [isEditingMode, setIsEditingMode] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortType, setSortType] = useState<string>("date_desc");
+  const [filterLocation, setFilterLocation] = useState<string>("");
+
+  // LOGIC LẤY DỮ LIỆU BAN ĐẦU
+  useEffect(() => {
+    dispatch(fetchStationsThunk());
+    if (error) message.error(error);
+  }, [dispatch, error]);
+
+  const filteredAndSortedStations = useMemo(() => {
+    let result = stations.slice();
+
+    // Tìm kiếm
+    if (searchTerm) {
+      result = result.filter(
+        (s) =>
+          s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          s.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Lọc theo Địa điểm
+    if (filterLocation) {
+      result = result.filter((s) => s.location.includes(filterLocation));
+    }
+
+    // Sắp xếp
+    if (sortType === "name_asc") {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortType === "date_desc") {
+      result.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+
+    return result;
+  }, [stations, searchTerm, sortType, filterLocation]);
+
+  const generateNewStationId = () => {
+    const bxIds = stations
+        .map(s => s.id)
+        .filter(id => id.startsWith('BX')) 
+        .map(id => parseInt(id.replace('BX', ''))) 
+        .filter(num => !isNaN(num)); 
+    
+    const maxNum = bxIds.length > 0 ? Math.max(...bxIds) : 0;
+    const newIdNum = maxNum + 1;
+
+    const paddedNum = String(newIdNum).padStart(3, '0');
+    
+    return `BX${paddedNum}`;
+};
+
+  // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
+  const handleAdd = () => {
+        const now = new Date().toISOString();
+        const newId = generateNewStationId(); // Vẫn tạo ID chuẩn ở Frontend
+        
+        // Gán dữ liệu cơ sở cho Modal
+        setEditingStation({ 
+            id: newId, 
+            name: '', location: '', descriptions: '', phone: '',
+            image: null, wallpaper: null,
+            created_at: now, 
+            updated_at: now,
+        } as any); 
+        
+        setIsEditingMode(false); // <--- QUAN TRỌNG: Đặt chế độ THÊM MỚI (FALSE)
+        setIsModalVisible(true);
+    };
+
+    const handleEdit = (station: Station) => {
+        setEditingStation(station); // Chế độ sửa
+        setIsEditingMode(true); // <--- QUAN TRỌNG: Đặt chế độ SỬA (TRUE)
+        setIsModalVisible(true);
+    };
+
+    const handleSave = (stationData: Station) => {
+        // Dùng state isEditingMode để quyết định API nào cần gọi
+        if (isEditingMode) { 
+            // Gọi UPDATE (PUT)
+            dispatch(updateStationThunk(stationData));
+            message.success("Đang cập nhật bến xe...");
+        } else {
+            // Gọi ADD (POST)
+            dispatch(addStationThunk(stationData));
+            message.success("Đang thêm bến xe...");
+        }
+        
+        setIsModalVisible(false);
+        setEditingStation(null);
+    };
+
+  const handleDelete = (id: string) => {
+    dispatch(deleteStationThunk(id));
+    message.loading("Đang xóa bến xe...", 0.5);
+    console.log("Xóa ID:", id);
   };
 
-  const data: Station[] = [
-    {
-      id: "BX1",
-      name: "Bến Xe Giáp Bát",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe phục vụ các tuyến đường phía Nam.",
-      location: "Giải Phóng, Hoàng Mai, Hà Nội",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-    {
-      id: "BX2",
-      name: "Bến Xe Mỹ Đình",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe phục vụ các tuyến đường phía Bắc và Tây Bắc.",
-      location: "Phạm Hùng, Nam Từ Liêm, Hà Nội",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-    {
-      id: "BX3",
-      name: "Bến Xe Miền Đông",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe lớn nhất miền Nam.",
-      location: "Phường 26, Bình Thạnh, TP.HCM",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-    {
-      id: "BX4",
-      name: "Bến Xe Giáp Bát",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe phục vụ các tuyến đường phía Nam.",
-      location: "Giải Phóng, Hoàng Mai, Hà Nội",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-    {
-      id: "BX5",
-      name: "Bến Xe Mỹ Đình",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe phục vụ các tuyến đường phía Bắc và Tây Bắc.",
-      location: "Phạm Hùng, Nam Từ Liêm, Hà Nội",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-    {
-      id: "BX6",
-      name: "Bến Xe Miền Đông",
-      image:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      wallpaper:
-        "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
-      descriptions: "Bến xe lớn nhất miền Nam.",
-      location: "Phường 26, Bình Thạnh, TP.HCM",
-      phone: "0123456789",
-      created_at: new Date("2025-01-01T10:00:00"),
-      updated_at: new Date("2025-01-01T10:00:00"),
-    },
-  ];
+  const handleExportExcel = () => {
+    if (filteredAndSortedStations.length === 0) {
+      message.warning('Không có dữ liệu để xuất file.');
+      return;
+    }
+    
+    // Chuẩn bị dữ liệu để xuất file (chỉ lấy các trường cần thiết)
+    const exportData = filteredAndSortedStations.map(s => ({
+        ID: s.id,
+        'Tên Bến Xe': s.name,
+        'Địa Chỉ': s.location,
+        'Mô Tả': s.descriptions,
+        'Số ĐT': s.phone,
+        'Ngày Tạo': formatDateTime(s.created_at),
+        'Ngày Cập Nhật': formatDateTime(s.updated_at),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    // Thiết lập độ rộng cột (Tùy chọn)
+    worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 25 }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Ben_Xe");
+
+    try {
+        XLSX.writeFile(workbook, "Danh_sach_Ben_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx");
+        message.success('Đã xuất file Excel thành công!');
+    } catch (e) {
+        message.error('Lỗi khi xuất file Excel.');
+        console.error(e);
+    }
+  };
 
   return (
     <div>
-      <div className="header-page flex flex-col gap-3">
+      <div className="header-page flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
           <img src={home} alt="" />
           <img src={hide} className="rotate-90" alt="" />
@@ -130,65 +213,105 @@ export default function StationManagers() {
           </div>
         </div>
 
-        {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
-        <div className="flex gap-4 justify-between">
-          <Button type="primary" icon={<PlusOutlined />}>
+        {/* 3. KHU VỰC HÀNH ĐỘNG (CHIA 2 BÊN) */}
+        <div className="flex gap-4 justify-between mt-4">
+          {/* BÊN TRÁI: THÊM */}
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             Thêm Bến Xe
           </Button>
-          <div className="flex gap-4">
+
+          {/* BÊN PHẢI: XUẤT, LỌC, TÌM KIẾM */}
+          <div className="flex items-center gap-4">
+            {/* Xuất file */}
             <div
-              onClick={ExportExcel}
-              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 h-10 justify-center"
+              onClick={handleExportExcel}
+              className="rounded-md flex gap-2 items-center border-2 border-gray-400 px-3 h-10 justify-center cursor-pointer hover:bg-gray-50 transition"
             >
-              <img className="w-4 h-4" src={excel} alt="" />
-              <p>Xuất file</p>
+              <img className="w-4 h-4" src={excel} alt="Xuất Excel" />
+              <p className="m-0 text-sm">Xuất file</p>
             </div>
 
+            {/* Select Sắp xếp */}
             <select
-              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 justify-center"
-              name=""
-              id=""
+              className="rounded-md border-2 border-gray-400 px-3 h-10 text-sm"
+              onChange={(e) => setSortType(e.target.value)}
+              value={sortType}
             >
-              <option value=""> Sắp xếp tất cả</option>
-              <option value="">Sắp xếp giá</option>
-              <option value="">Sắp xếp hãng</option>
+              <option value="date_desc">Ngày tạo (Mới nhất)</option>
+              <option value="name_asc">Tên (A-Z)</option>
             </select>
 
+            {/* Select Lọc */}
             <select
-              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 justify-center"
-              name=""
-              id=""
+              className="rounded-md border-2 border-gray-400 px-3 h-10 text-sm"
+              onChange={(e) => setFilterLocation(e.target.value)}
+              value={filterLocation}
             >
-              <option value="">Bộ lọc tất cả</option>
-              <option value="">lọc theo giá</option>
-              <option value="">Lọc theo mã</option>
+              <option value="">Bộ lọc (Địa điểm)</option>
+              <option value="Hà Nội">Hà Nội</option>
+              <option value="TP.HCM">TP.HCM</option>
             </select>
+
+            {/* Input Tìm kiếm */}
             <Input
               prefix={<SearchOutlined />}
-              placeholder="Tìm kiếm..."
-              style={{ width: 250, padding: "8px 12px" }}
+              placeholder="Tìm kiếm theo Tên/Địa chỉ..."
+              style={{ width: 250 }}
+              size="large"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              allowClear
             />
           </div>
         </div>
-        {/* {Bảng Bến xe} */}
-        <Table<Station> pagination={{ pageSize: 5 }} dataSource={data}>
-          <Column title="ID" dataIndex="id" key="id" />
-          <Column title="Tên Bến Xe" dataIndex="name" key="name" />
-          <Column title="Địa chỉ" dataIndex="location" key="location" />
-          <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
-          <Column title="Số Điện Thoại" dataIndex="phone" key="phone" />
-          <Column
-            title="Action"
-            key="action"
-            render={(_, record: Station) => (
-              <Space>
-                <Button icon={<DeleteOutlined />} danger type="link"></Button>
-                <Button icon={<EditOutlined />} danger type="link"></Button>
-              </Space>
-            )}
-          />
-        </Table>
       </div>
+
+      {/* --- BẢNG BẾN XE --- */}
+      <Table<Station>
+        loading={loading} // Hiển thị loading khi đang fetch data
+        pagination={{ pageSize: 5 }}
+        dataSource={filteredAndSortedStations}
+        rowKey="id"
+        className="p-4"
+      >
+        <Column title="ID" dataIndex="id" key="id" width={80} />
+        <Column title="Tên Bến Xe" dataIndex="name" key="name" />
+        <Column title="Địa chỉ" dataIndex="location" key="location" />
+        <Column title="Số ĐT" dataIndex="phone" key="phone" width={100} />
+        <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
+        <Column
+          title="Action"
+          key="action"
+          width={100}
+          render={(_, record: Station) => (
+            <Space key={record.id}>
+              <Tooltip title="Sửa">
+                <Button
+                  icon={<EditOutlined />}
+                  type="link"
+                  onClick={() => handleEdit(record)} // Mở Modal Sửa
+                />
+              </Tooltip>
+              <Popconfirm
+                title={`Xác nhận xóa ${record.name}?`}
+                onConfirm={() => handleDelete(record.id)}
+              >
+                <Tooltip title="Xóa">
+                  <Button icon={<DeleteOutlined />} danger type="link" />
+                </Tooltip>
+              </Popconfirm>
+            </Space>
+          )}
+        />
+      </Table>
+
+      {/* --- MODAL THÊM/SỬA --- */}
+      <StationModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={handleSave}
+        initialData={editingStation} // Dữ liệu sẽ được điền khi sửa
+        isEditModeProp={isEditingMode}
+      />
     </div>
   );
 }

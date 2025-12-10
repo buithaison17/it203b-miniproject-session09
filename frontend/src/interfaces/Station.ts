@@ -1,13 +1,13 @@
 export interface Station {
   id: string;
   name: string;
-  image: string;
-  wallpaper: string;
-  descriptions: string;
   location: string;
+  descriptions: string;
   phone: string;
-  created_at: Date;
-  updated_at: Date;
+  image: string | null; // URL của ảnh
+  wallpaper: string | null; // URL của hình nền
+  created_at: string;
+  updated_at: string;
 }
 
 export interface BusStation {
