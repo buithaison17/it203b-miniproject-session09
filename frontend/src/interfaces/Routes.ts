@@ -1,7 +1,7 @@
 export interface Routes {
   id: string;
-  departure_station_id: string;
-  arrival_statin_id: string;
+  departure_station_name: string;
+  arrival_station_name: string;
   price: number;
   duration: string;
   distance: number;
