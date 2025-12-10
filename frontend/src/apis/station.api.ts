@@ -1,10 +1,7 @@
 import type { Station } from '../interfaces/Station';
 
-// Đã cập nhật cổng API
 const API_URL = 'http://localhost:8080/stations'; 
 
-// Hàm chuyển đổi Date objects thành chuỗi ISO (Chỉ cần thiết khi gửi đi, giữ nguyên)
-// Lưu ý: Hàm này giả định dữ liệu đầu vào là Station (có thể là string hoặc Date, cần cẩn thận)
 const prepareData = (station: any) => ({
     ...station,
     // Đảm bảo là string ISO, nếu input là Date object thì dùng toISOString()
@@ -17,7 +14,6 @@ export async function fetchStationsApi(): Promise<Station[]> {
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu bến xe.');
     
-    // TRẢ VỀ CHUỖI NGÀY THÁNG GỐC để Redux Store lưu trữ
     const data: Station[] = await response.json();
     return data; 
 }
@@ -31,7 +27,6 @@ export async function addStationApi(station: Station): Promise<Station> {
     });
     if (!response.ok) throw new Error('Không thể thêm bến xe.');
     
-    // TRẢ VỀ CHUỖI NGÀY THÁNG GỐC
     return response.json();
 }
 
@@ -44,7 +39,6 @@ export async function updateStationApi(station: Station): Promise<Station> {
     });
     if (!response.ok) throw new Error('Không thể cập nhật bến xe.');
     
-    // TRẢ VỀ CHUỖI NGÀY THÁNG GỐC
     return response.json();
 }
 
