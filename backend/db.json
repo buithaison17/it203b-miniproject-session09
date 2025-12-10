@@ -1,6 +1,95 @@
 {
   "users": {},
-  "stations": {},
+  "stations": [
+    {
+      "id": "BX001",
+      "name": "Bến Xe Giáp Bát",
+      "location": "Giải Phóng, Hoàng Mai, Hà Nội",
+      "descriptions": "Bến xe phục vụ các tuyến đường phía Nam.",
+      "phone": "0123456789",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-12-10T09:13:33.956Z"
+    },
+    {
+      "id": "BX002",
+      "name": "Bến Xe Mỹ Đình",
+      "location": "Phạm Hùng, Nam Từ Liêm, Hà Nội",
+      "descriptions": "Bến xe phục vụ các tuyến đường phía Bắc và Tây Bắc.",
+      "phone": "0123456789",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765359619/wjhaoaoxwlnpartmqj8g.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765359621/vcwrohj8dnrvgtucqurl.png",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-12-10T09:39:46.560Z"
+    },
+    {
+      "id": "BX003",
+      "name": "Bến Xe Miền Đông",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "descriptions": "Bến xe lớn nhất miền Nam.",
+      "location": "Phường 26, Bình Thạnh, TP.HCM",
+      "phone": "0123456789",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-01-01T10:00:00"
+    },
+    {
+      "id": "BX004",
+      "name": "Bến Xe Giáp Bát",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "descriptions": "Bến xe phục vụ các tuyến đường phía Nam.",
+      "location": "Giải Phóng, Hoàng Mai, Hà Nội",
+      "phone": "0123456789",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-01-01T10:00:00"
+    },
+    {
+      "id": "BX005",
+      "name": "Bến Xe Mỹ Đình",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "descriptions": "Bến xe phục vụ các tuyến đường phía Bắc và Tây Bắc.",
+      "location": "Phạm Hùng, Nam Từ Liêm, Hà Nội",
+      "phone": "0123456789",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-01-01T10:00:00"
+    },
+    {
+      "id": "BX006",
+      "name": "Bến Xe Miền Đông",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765251510/BX-TP-VUNG-TAU-1.jpg_rcbgps.png",
+      "descriptions": "Bến xe lớn nhất miền Nam.",
+      "location": "Phường 26, Bình Thạnh, TP.HCM",
+      "phone": "0123456789",
+      "created_at": "2025-01-01T10:00:00",
+      "updated_at": "2025-01-01T10:00:00"
+    },
+    {
+      "id": "BX007",
+      "name": "Xây dựng website thương mại điện tử",
+      "location": "Phạm Hùng, Nam Từ Liêm, Hà Nội",
+      "descriptions": "13212312323",
+      "phone": "0123456789",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765371297/tsyfybbeilofrv0yiput.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765371299/jav58thhrxlcyxexwolt.png",
+      "created_at": "2025-12-10T12:54:12.764Z",
+      "updated_at": "2025-12-10T12:54:23.409Z"
+    },
+    {
+      "id": "BX008",
+      "name": "Dealine",
+      "location": "dsaasdasd",
+      "descriptions": "âsdasd",
+      "phone": "ádasdasdasd",
+      "image": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765371773/t5iy16nkde4ssddsghrw.png",
+      "wallpaper": "https://res.cloudinary.com/dcccifk4l/image/upload/v1765371781/thqnlf3eeqh87jntqaok.png",
+      "created_at": "2025-12-10T13:02:07.581Z",
+      "updated_at": "2025-12-10T13:02:20.303Z"
+    }
+  ],
   "bus_company": {},
   "buses": {},
   "tickets": {},
