@@ -15,6 +15,8 @@ export interface Ticket {
   id: string;
   schedule_id: string;
   seat_id: string;
+  bus_id: string;
+  phone: string;
   departure_time: Date;
   arrival_time: Date;
   seat_type: string;

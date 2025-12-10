@@ -11,10 +11,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
+import type { Bus } from "../../interfaces/Bus";
 
-export default function UserManagers() {
+export default function AdminReport() {
   const { Column } = Table;
-const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState("all");
   const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
@@ -141,16 +142,115 @@ const [searchText, setSearchText] = useState("");
     },
   ];
 
-  const handleSort = (e) => {
-      setSortValue(e.target.value);
-  }
+  const buses: Bus[] = [
+    {
+      id: "BUS001",
+      company_id: "COMP001",
+      bus_name: "Nhà xe Hạnh Phúc",
+      descriptions: "Xe giường nằm VIP 40 chỗ, có wifi và nước uống miễn phí",
+      license_plate: "29B-12345",
+      capacity: 40,
+      created_at: new Date("2025-01-01T08:00:00"),
+      updated_at: new Date("2025-01-01T08:00:00"),
+    },
+    {
+      id: "BUS002",
+      company_id: "COMP001",
+      bus_name: "Nhà xe Hạnh Phúc",
+      descriptions: "Xe ghế ngồi thường 30 chỗ, tiện nghi cơ bản",
+      license_plate: "29B-54321",
+      capacity: 30,
+      created_at: new Date("2025-01-02T08:30:00"),
+      updated_at: new Date("2025-01-02T08:30:00"),
+    },
+    {
+      id: "BUS003",
+      company_id: "COMP002",
+      bus_name: "Nhà xe An Bình",
+      descriptions: "Xe giường nằm VIP 45 chỗ, phục vụ đồ ăn nhẹ",
+      license_plate: "30C-67890",
+      capacity: 45,
+      created_at: new Date("2025-01-03T09:00:00"),
+      updated_at: new Date("2025-01-03T09:00:00"),
+    },
+    {
+      id: "BUS004",
+      company_id: "COMP002",
+      bus_name: "Nhà xe An Bình",
+      descriptions: "Xe ghế ngồi 35 chỗ, có điều hòa",
+      license_plate: "30C-09876",
+      capacity: 35,
+      created_at: new Date("2025-01-04T10:00:00"),
+      updated_at: new Date("2025-01-04T10:00:00"),
+    },
+    {
+      id: "BUS005",
+      company_id: "COMP003",
+      bus_name: "Nhà xe Mai Linh",
+      descriptions: "Xe VIP 50 chỗ, giường êm",
+      license_plate: "31D-11111",
+      capacity: 50,
+      created_at: new Date("2025-01-05T07:00:00"),
+      updated_at: new Date("2025-01-05T07:00:00"),
+    },
+    {
+      id: "BUS006",
+      company_id: "COMP003",
+      bus_name: "Nhà xe Mai Linh",
+      descriptions: "Xe ghế thường 40 chỗ, an toàn",
+      license_plate: "31D-22222",
+      capacity: 40,
+      created_at: new Date("2025-01-06T07:30:00"),
+      updated_at: new Date("2025-01-06T07:30:00"),
+    },
+    {
+      id: "BUS007",
+      company_id: "COMP004",
+      bus_name: "Nhà xe Phú Quý",
+      descriptions: "Xe giường nằm 42 chỗ, wifi miễn phí",
+      license_plate: "32E-33333",
+      capacity: 42,
+      created_at: new Date("2025-01-07T08:15:00"),
+      updated_at: new Date("2025-01-07T08:15:00"),
+    },
+    {
+      id: "BUS008",
+      company_id: "COMP004",
+      bus_name: "Nhà xe Phú Quý",
+      descriptions: "Xe ghế ngồi 38 chỗ, điều hòa",
+      license_plate: "32E-44444",
+      capacity: 38,
+      created_at: new Date("2025-01-08T09:20:00"),
+      updated_at: new Date("2025-01-08T09:20:00"),
+    },
+    {
+      id: "BUS009",
+      company_id: "COMP005",
+      bus_name: "Nhà xe Thành Công",
+      descriptions: "Xe VIP 48 chỗ, phục vụ nước uống",
+      license_plate: "33F-55555",
+      capacity: 48,
+      created_at: new Date("2025-01-09T10:45:00"),
+      updated_at: new Date("2025-01-09T10:45:00"),
+    },
+    {
+      id: "BUS010",
+      company_id: "COMP005",
+      bus_name: "Nhà xe Thành Công",
+      descriptions: "Xe ghế thường 36 chỗ, tiện nghi cơ bản",
+      license_plate: "33F-66666",
+      capacity: 36,
+      created_at: new Date("2025-01-10T11:00:00"),
+      updated_at: new Date("2025-01-10T11:00:00"),
+    },
+  ];
+
   const handleSearch = (e) => {
     setSearchText(e.target.value);
-  }
+  };
 
- const filteredData = bookings
+  const filteredData = bookings
     .filter((b) => {
- 
       if (seatFilter && b.seat_type !== seatFilter) return false;
 
       if (statusFilter && b.status !== statusFilter) return false;
@@ -165,9 +265,15 @@ const [searchText, setSearchText] = useState("");
     })
     .sort((a, b) => {
       if (sortValue === "price") return a.price - b.price;
-      if (sortValue === "time") return a.departure_time.getTime() - b.departure_time.getTime();
+      if (sortValue === "time")
+        return a.departure_time.getTime() - b.departure_time.getTime();
       return 0;
     });
+
+  const TotalRevenue = bookings.reduce(
+    (sum, element) => sum + element.price,
+    0
+  );
 
   const ExportExcel = () => {
     const sheetData = bookings.map((item) => ({
@@ -196,11 +302,11 @@ const [searchText, setSearchText] = useState("");
 
           <img src={hide} className="rotate-90" alt="" />
 
-          <p className="font-both">Danh sách đơn vé...</p>
+          <p className="font-both">Báo cáo & Thống kê</p>
         </div>
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
-          <div className="text-4xl">Danh sách đơn vé </div>
+          <div className="text-4xl">Báo cáo & Thống kê</div>
           {/* Đăng xuất */}
           <div className="flex items-center gap-4 p-2 bg-white rounded-lg shadow-sm">
             {/* Avatar */}
@@ -222,7 +328,7 @@ const [searchText, setSearchText] = useState("");
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
         <div className="flex gap-4 justify-between">
           <Input
-          onChange={handleSearch}
+            onChange={handleSearch}
             prefix={<SearchOutlined />}
             placeholder="Tìm kiếm..."
             style={{ width: 250, padding: "8px 12px" }}
@@ -236,115 +342,116 @@ const [searchText, setSearchText] = useState("");
               <p>Xuất file</p>
             </div>
 
+            <input
+              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-40 h-10 justify-center"
+              type="date"
+            />
+
             <select
-            onClick={(e) => handleSort(e)}
-              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-35 justify-center"
-              name=""
-              id=""
+              className="border rounded px-2 py-1"
+              value={seatFilter}
+              onChange={(e) => setSeatFilter(e.target.value)}
             >
-              <option value="all"> Sắp xếp tất cả</option>
-              <option value="price">Sắp xếp giá</option>
-              <option value="time">Sắp xếp thời gian</option>
+              <option value="all">Tuyến Đường</option>
+              <option value="VIP">Hà Giang - Hà Nội</option>
+              <option value="Normal">Tuyên Quang - Hà Nội</option>
             </select>
 
-             <select
-          className="border rounded px-2 py-1"
-          value={seatFilter}
-          onChange={(e) => setSeatFilter(e.target.value)}
-        >
-          <option value="">Tất cả loại ghế</option>
-          <option value="VIP">VIP</option>
-          <option value="Normal">Normal</option>
-        </select>
-
-        <select
-          className="border rounded px-2 py-1"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="">Tất cả trạng thái</option>
-          <option value="booked">Đã đặt</option>
-          <option value="cancelled">Hủy</option>
-        </select>
+            <select
+              className="border rounded px-2 py-1"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">Nhà Xe</option>
+              <option value="booked">Bằng Phấn</option>
+              <option value="cancelled">Duy Tân</option>
+              <option value="cancelled">Ngọc Hải</option>
+            </select>
           </div>
         </div>
 
         {/* bảng dữ liệu */}
 
-        <Table<Ticket> pagination={{ pageSize: 5 }} dataSource={filteredData}>
-          <Column
-            title="STT"
-            key="index"
-            render={(_, __, index) => index + 1}
-          />
+        <div className="flex gap-5">
+          <div className="w-100">
+            <div>
+              <Table<Ticket>
+                pagination={false}
+                dataSource={filteredData.slice(0, 5)}
+              >
+                <Column
+                  title="Xếp hạng"
+                  key="index"
+                  render={(_, __, index) => index + 1}
+                />
 
-          <Column title="Mã vé" dataIndex="id" key="id" />
-          <Column
-            title="Mã lịch trình"
-            dataIndex="schedule_id"
-            key="schedule_id"
-          />
-          <Column title="Ghế" dataIndex="seat_id" key="seat_id" />
+                <Column title="Tên" dataIndex="id" key="id" />
+                <Column
+                  title="Doanh thu"
+                  dataIndex="price"
+                  key="schedule_id"
+                  render={(value) => value.toLocaleString("vi-VN")}
+                />
+              </Table>
+            </div>
+             <div className="text-2xl">
+              {" "}
+              Tổng Doanh thu : {TotalRevenue.toLocaleString("vi-VN")} VND
+            </div>
+          </div>
 
-          <Column
-            title="Giờ đi"
-            dataIndex="departure_time"
-            key="departure_time"
-            render={(value: Date) => value.toLocaleString()}
-          />
 
-          <Column
-            title="Giờ đến"
-            dataIndex="arrival_time"
-            key="arrival_time"
-            render={(value: Date) => value.toLocaleString()}
-          />
-          <Column title="Loại ghế" dataIndex="seat_type" key="seat_type" />
-          <Column title="Giá" dataIndex="price" key="price" />
+          <Table<Ticket> pagination={{ pageSize: 5 }} dataSource={filteredData}>
+            <Column
+              title="STT"
+              key="index"
+              render={(_, __, index) => index + 1}
+            />
 
-          <Column
-            title="Trạng thái"
-            dataIndex="status"
-            key="status"
-            render={(status: string) => (
-              <Tag color={status === "booked" ? "green" : "volcano"}>
-                {status.toUpperCase()}
-              </Tag>
-            )}
-          />
-          <Column
-            title="Ngày tạo"
-            dataIndex="created_at"
-            key="created_at"
-            render={(value: Date) => value.toLocaleString()}
-          />
-          <Column
-            title="Ngày cập nhật"
-            dataIndex="updated_at"
-            key="updated_at"
-            render={(value: Date) => value.toLocaleString()}
-          />
-          <Column
-            title="Hành động"
-            key="action"
-            render={(_, record: Ticket) => (
-              <Space>
-                <Button
-                  style={{ fontSize: "20px" }}
-                  icon={<DeleteOutlined />}
-                  danger
-                  type="link"
-                ></Button>
-                <Button
-                  style={{ fontSize: "20px" }}
-                  icon={<EditOutlined />}
-                  danger
-                  type="link"
-                ></Button>
-              </Space>
-            )}
-          />
-        </Table>
+            <Column title="Mã vé" dataIndex="id" key="id" />
+            <Column
+              title="Mã lịch trình"
+              dataIndex="schedule_id"
+              key="schedule_id"
+            />
+            <Column title="Ghế" dataIndex="seat_id" key="seat_id" />
+
+            
+            
+            <Column
+              title="Ngày tạo"
+              dataIndex="created_at"
+              key="created_at"
+              render={(value: Date) => value.toLocaleString()}
+            />
+            <Column
+              title="Ngày cập nhật"
+              dataIndex="updated_at"
+              key="updated_at"
+              render={(value: Date) => value.toLocaleString()}
+            />
+            <Column
+              title="Hành động"
+              key="action"
+              render={(_, record: Ticket) => (
+                <Space>
+                  <Button
+                    style={{ fontSize: "20px" }}
+                    icon={<DeleteOutlined />}
+                    danger
+                    type="link"
+                  ></Button>
+                  <Button
+                    style={{ fontSize: "20px" }}
+                    icon={<EditOutlined />}
+                    danger
+                    type="link"
+                  ></Button>
+                </Space>
+              )}
+            />
+          </Table>
+        </div>
       </div>
     </div>
   );

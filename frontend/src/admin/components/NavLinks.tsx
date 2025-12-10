@@ -23,7 +23,7 @@ export default function NavLinks() {
         <a className="dropdown-item"href="">Quản lý Xe</a>
         <a className="dropdown-item"href="">Quản lý Ghế</a>
         <a className="dropdown-item"href="">Quản lý Tuyến Đường</a>
-        <a className="dropdown-item"href="">Quản lý Lịch Trình</a>
+        <NavLink className="dropdown-item" to="report">Quản lý Lịch Trình</NavLink>
         <NavLink className="dropdown-item" to="/admin/order">Quản lý Đơn Vé</NavLink>
         <a className="dropdown-item"href="">Quản lý Hủy Vé</a>
         <a className="dropdown-item"href="">Quản lý Đánh Giá</a>
