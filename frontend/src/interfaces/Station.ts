@@ -1,10 +1,11 @@
 export interface Station {
   id: string;
   name: string;
-  image: String;
+  image: string;
   wallpaper: string;
   descriptions: string;
   location: string;
+  phone: string;
   created_at: Date;
   updated_at: Date;
 }

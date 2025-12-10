@@ -10,9 +10,9 @@ export interface BusCompany {
 export interface Bus {
   id: string;
   company_id: string;
-  name: string;
+  bus_name: string;
   descriptions: string;
-  license_plate: String;
+  license_plate: string;
   capacity: number;
   created_at: Date;
   updated_at: Date;
@@ -29,7 +29,7 @@ export interface Seat {
   bus_id: string;
   seat_number: string;
   seat_type: string;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "booked";
   price: number;
   created_at: Date;
   updated_at: Date;
