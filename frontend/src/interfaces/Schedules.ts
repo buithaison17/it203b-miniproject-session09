@@ -19,9 +19,9 @@ export interface Ticket {
   phone: string;
   departure_time: Date;
   arrival_time: Date;
-  seat_type: string;
+  seat_type: "LUXURY" | "VIP" | "STANDARD";
   price: number;
-  status: "booked" | "cancelled";
+  status: "Booked" | "Cancelled";
   created_at: Date;
   updated_at: Date;
 }
