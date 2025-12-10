@@ -46,43 +46,44 @@ export default function AdminReport() {
   const cancelTickets = useSelector((state: RootState) => state.cancelTickets.cancelTickets);
   
 
-
   
 
 const trip = bookings.map((booking) => {
-  // 1. Tìm bus từ booking
+  
   const bus = buses.find(b => b.id === booking.bus_id);
 
-  // 2. Tìm company từ bus
+ 
   const company = busCompanys.find(c => c.bus_companies_id === bus?.company_id);
 
-  const sameBusBookings = bookings.filter(
-    (b) => b.bus_id === booking.bus_id
-  );
-
-
-  const total = sameBusBookings.length;
-  const canceled = sameBusBookings.filter((b) => b.status === "Cancelled").length;
-  const cancel_rate = total > 0 ? canceled / total : 0;
-
-  console.log(sameBusBookings);
   
+  const sameBusBookings = bookings.filter(b => b.bus_id === booking.bus_id);
+
+  const totalTickets = sameBusBookings.length;
+  const cancelledTickets = sameBusBookings.filter(b => b.status === "Cancelled").length;
+  const cancel_rate = totalTickets > 0 ? cancelledTickets / totalTickets : 0;
+
+  const reviewList = reviews.filter(r => r.bus_id === booking.bus_id);
+  const avgReview =
+    reviewList.length > 0
+      ? reviewList.reduce((sum, r) => sum + r.rating, 0) / reviewList.length
+      : 0;
 
   return {
     ...booking,
     bus_name: bus?.bus_name ?? null,
     company_name: company?.company_name ?? null,
+    cancel_rate,
+    review_score: avgReview,
   };
 });
+
 
 
 
 console.log(trip);
 
 
-  // const reportReveneu = {
-    
-  // }
+
 
   
 
