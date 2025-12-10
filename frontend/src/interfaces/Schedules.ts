@@ -30,6 +30,7 @@ export interface CancellationPolicies {
   id: string;
   descriptions: string;
   route_id: string;
+  ticket_id: string;
   cancellation_time_limit: string;
   refund_percentage: number;
   created_at: Date;

@@ -16,6 +16,7 @@ import { featRoutes } from "../../apis/routes.api";
 import { featBusCompany } from "../../apis/bus_companies.api";
 import { featCancelTickets } from "../../apis/cancelled_tickets.api";
 import { featReview } from "../../apis/reviews.api";
+import { featBus } from "../../apis/buses.api";
 
 export default function AdminReport() {
   const { Column } = Table;
@@ -26,33 +27,65 @@ export default function AdminReport() {
 
 
     const dispatch = useDispatch<AppDispatch>();
+    
 
   useEffect(() => {
-    dispatch(featBooking());
     dispatch(featRoutes());
     dispatch(featBusCompany());
     dispatch(featCancelTickets());
     dispatch(featReview());
+    dispatch(featBus());
+    dispatch(featBooking());
   }, [dispatch]);
   
   const bookings = useSelector((state: RootState) => state.tickets.tickets);
   const routes = useSelector((state: RootState) => state.routes.routes);
   const busCompanys = useSelector((state: RootState) => state.busCompanys.busCompany);
+  const buses = useSelector((state: RootState) => state.buses.buses);
   const reviews = useSelector((state: RootState) => state.reviews.reviews);
   const cancelTickets = useSelector((state: RootState) => state.cancelTickets.cancelTickets);
   
 
-  console.log(bookings);
-  console.log(routes);
-  console.log(busCompanys);
-  console.log(reviews);
-  console.log(cancelTickets);
+
   
 
+const trip = bookings.map((booking) => {
+  // 1. Tìm bus từ booking
+  const bus = buses.find(b => b.id === booking.bus_id);
 
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
+  // 2. Tìm company từ bus
+  const company = busCompanys.find(c => c.bus_companies_id === bus?.company_id);
+
+  const sameBusBookings = bookings.filter(
+    (b) => b.bus_id === booking.bus_id
+  );
+
+
+  const total = sameBusBookings.length;
+  const canceled = sameBusBookings.filter((b) => b.status === "Cancelled").length;
+  const cancel_rate = total > 0 ? canceled / total : 0;
+
+  console.log(sameBusBookings);
+  
+
+  return {
+    ...booking,
+    bus_name: bus?.bus_name ?? null,
+    company_name: company?.company_name ?? null,
   };
+});
+
+
+
+console.log(trip);
+
+
+  // const reportReveneu = {
+    
+  // }
+
+  
+
 
   const filteredData = bookings
     .filter((b) => {
@@ -133,7 +166,7 @@ export default function AdminReport() {
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
         <div className="flex gap-4 justify-between">
           <Input
-            onChange={handleSearch}
+            onChange={(e) => setSearchText(e.target.value)}
             prefix={<SearchOutlined />}
             placeholder="Tìm kiếm..."
             style={{ width: 250, padding: "8px 12px" }}
@@ -232,7 +265,7 @@ export default function AdminReport() {
               title="Doanh thu"
               dataIndex="updated_at"
               key="updated_at"
-              render={(value: Date) => value.toLocaleString()}
+              render={(value) => value.toLocaleString()}
             />
             <Column
               title="Hành động"
