@@ -146,5 +146,197 @@
     }
   ],
   "schedule": {},
-  "payment_provider": {}
+  "payment_provider": {},
+   "routes": [
+  {
+    "routes_id": "R001",
+    "departure_station_id": "ST001",
+    "arrival_station_id": "ST002",
+    "price": 250000,
+    "duration": 180,
+    "distance": 190,
+    "created_at": "2025-01-10T08:00:00",
+    "updated_at": "2025-01-10T08:00:00"
+  },
+  {
+    "routes_id": "R002",
+    "departure_station_id": "ST002",
+    "arrival_station_id": "ST003",
+    "price": 320000,
+    "duration": 240,
+    "distance": 230,
+    "created_at": "2025-01-11T09:30:00",
+    "updated_at": "2025-01-11T09:30:00"
+  },
+  {
+    "routes_id": "R003",
+    "departure_station_id": "ST001",
+    "arrival_station_id": "ST004",
+    "price": 450000,
+    "duration": 300,
+    "distance": 350,
+    "created_at": "2025-01-12T10:15:00",
+    "updated_at": "2025-01-12T10:15:00"
+  },
+  {
+    "routes_id": "R004",
+    "departure_station_id": "ST003",
+    "arrival_station_id": "ST005",
+    "price": 150000,
+    "duration": 120,
+    "distance": 120,
+    "created_at": "2025-01-13T07:50:00",
+    "updated_at": "2025-01-13T07:50:00"
+  },
+  {
+    "routes_id": "R005",
+    "departure_station_id": "ST004",
+    "arrival_station_id": "ST001",
+    "price": 280000,
+    "duration": 200,
+    "distance": 210,
+    "created_at": "2025-01-14T14:25:00",
+    "updated_at": "2025-01-14T14:25:00"
+  }
+]
+ ,
+   "bus_companies":[
+  {
+    "bus_companies_id": "BC001",
+    "company_name": "Nhà xe Hoàng Long",
+    "image": "https://example.com/images/hoanglong.jpg",
+    "descriptions": "Nhà xe lâu đời, phục vụ các tuyến Bắc - Nam với chất lượng cao.",
+    "created_at": "2025-01-01T09:00:00",
+    "updated_at": "2025-01-01T09:00:00"
+  },
+  {
+    "bus_companies_id": "BC002",
+    "company_name": "Nhà xe Phương Trang",
+    "image": "https://example.com/images/phuongtrang.jpg",
+    "descriptions": "Xe giường nằm, đội ngũ tài xế chuyên nghiệp, phục vụ tận tâm.",
+    "created_at": "2025-01-02T14:20:00",
+    "updated_at": "2025-01-02T14:20:00"
+  },
+  {
+    "bus_companies_id": "BC003",
+    "company_name": "Nhà xe Thành Bưởi",
+    "image": "https://example.com/images/thanhbuoi.jpg",
+    "descriptions": "Tuyến Sài Gòn – Đà Lạt, nổi tiếng về sự an toàn và đúng giờ.",
+    "created_at": "2025-01-04T11:45:00",
+    "updated_at": "2025-01-04T11:45:00"
+  },
+  {
+    "bus_companies_id": "BC004",
+    "company_name": "Nhà xe Hải Âu",
+    "image": "https://example.com/images/haiau.jpg",
+    "descriptions": "Xe chất lượng cao chuyên tuyến Hải Phòng – Hà Nội.",
+    "created_at": "2025-01-06T16:10:00",
+    "updated_at": "2025-01-06T16:10:00"
+  },
+  {
+    "bus_companies_id": "BC005",
+    "company_name": "Nhà xe Kumho Samco",
+    "image": "https://example.com/images/kumho.jpg",
+    "descriptions": "Thương hiệu nổi tiếng từ Hàn Quốc, xe mạnh – sạch – mới.",
+    "created_at": "2025-01-08T13:30:00",
+    "updated_at": "2025-01-08T13:30:00"
+  }
+],
+  
+  "cancelled_tickets": [
+  {
+    "cancellation_policies_id": "C001",
+    "descriptions": "Hủy trước 24 giờ được hoàn 80% giá vé.",
+    "route_id": "R001",
+    "cancellation_time_limit": 1440,
+    "refund_percentage": 80,
+    "created_at": "2025-01-01T08:00:00",
+    "updated_at": "2025-01-01T08:00:00"
+  },
+  {
+    "cancellation_policies_id": "C002",
+    "descriptions": "Hủy trước 12 giờ được hoàn 50% giá vé.",
+    "route_id": "R001",
+    "cancellation_time_limit": 720,
+    "refund_percentage": 50,
+    "created_at": "2025-01-03T10:15:00",
+    "updated_at": "2025-01-03T10:15:00"
+  },
+  {
+    "cancellation_policies_id": "C003",
+    "descriptions": "Hủy trước 6 giờ hoàn 30% giá vé.",
+    "route_id": "R002",
+    "cancellation_time_limit": 360,
+    "refund_percentage": 30,
+    "created_at": "2025-01-04T09:40:00",
+    "updated_at": "2025-01-04T09:40:00"
+  },
+  {
+    "cancellation_policies_id": "C004",
+    "descriptions": "Hủy trước 2 giờ hoàn 10% giá vé.",
+    "route_id": "R003",
+    "cancellation_time_limit": 120,
+    "refund_percentage": 10,
+    "created_at": "2025-01-06T15:50:00",
+    "updated_at": "2025-01-06T15:50:00"
+  },
+  {
+    "cancellation_policies_id": "C005",
+    "descriptions": "Hủy trong vòng 1 giờ không hoàn tiền.",
+    "route_id": "R003",
+    "cancellation_time_limit": 60,
+    "refund_percentage": 0,
+    "created_at": "2025-01-08T12:00:00",
+    "updated_at": "2025-01-08T12:00:00"
+  }
+],
+  
+  "reviews": [
+  {
+    "review_id": "R001",
+    "user_id": "U1001",
+    "bus_id": "B001",
+    "rating": 5,
+    "review": "Xe chạy êm, tài xế lịch sự, đến đúng giờ. Sẽ ủng hộ lần sau.",
+    "created_at": "2025-01-01T10:30:00",
+    "updated_at": "2025-01-01T10:30:00"
+  },
+  {
+    "review_id": "R002",
+    "user_id": "U1002",
+    "bus_id": "B002",
+    "rating": 4,
+    "review": "Ghế ngồi thoải mái nhưng điều hòa hơi lạnh.",
+    "created_at": "2025-01-03T14:22:00",
+    "updated_at": "2025-01-03T14:22:00"
+  },
+  {
+    "review_id": "R003",
+    "user_id": "U1003",
+    "bus_id": "B001",
+    "rating": 3,
+    "review": "Đi đúng giờ nhưng xe hơi cũ, cần vệ sinh thêm.",
+    "created_at": "2025-01-05T09:10:00",
+    "updated_at": "2025-01-05T09:10:00"
+  },
+  {
+    "review_id": "R004",
+    "user_id": "U1004",
+    "bus_id": "B003",
+    "rating": 2,
+    "review": "Tài xế chạy hơi nhanh, gây khó chịu.",
+    "created_at": "2025-01-07T17:40:00",
+    "updated_at": "2025-01-07T17:40:00"
+  },
+  {
+    "review_id": "R005",
+    "user_id": "U1005",
+    "bus_id": "B002",
+    "rating": 5,
+    "review": "Dịch vụ tốt, xe mới, nhân viên nhiệt tình.",
+    "created_at": "2025-01-09T12:55:00",
+    "updated_at": "2025-01-09T12:55:00"
+  }
+]
+
 }

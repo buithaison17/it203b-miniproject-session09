@@ -35,3 +35,13 @@ export interface CancellationPolicies {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface Review {
+  review_id: string;       
+  user_id: string;        
+  bus_id: string;        
+  rating: number;          
+  review: string;        
+  created_at: string;    
+  updated_at: string;      
+}

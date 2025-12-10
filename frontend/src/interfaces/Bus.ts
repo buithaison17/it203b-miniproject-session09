@@ -1,6 +1,6 @@
 export interface BusCompany {
   id: string;
-  name: string;
+  company_name: string;
   image: string;
   descriptions: string;
   created_at: Date;

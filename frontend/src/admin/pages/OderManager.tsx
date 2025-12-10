@@ -2,19 +2,14 @@ import home from "../../assets/icons/home-icon.png";
 import hide from "../../assets/icons/icon_hide.png";
 import logout from "../../assets/icons/Icon-out.png";
 import excel from "../../assets/icons/excel-logo.png";
-import { Button, Input, Space, Table, Tag } from "antd";
+import { Input, Table, Tag } from "antd";
 import type { Ticket } from "../../interfaces/Schedules";
 import * as XLSX from "xlsx";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../stores/store";
-import { featBooking, UpdateBooking } from "../../apis/booking.api";
-import ModalBooking from "../components/Modals/Orders/ModalBooking";
+import { featBooking } from "../../apis/booking.api";
 
 export default function UserManagers() {
   const { Column } = Table;
@@ -22,38 +17,12 @@ export default function UserManagers() {
   const [sortValue, setSortValue] = useState("all");
   const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
-  const [selectBooking, setSelectBooking] = useState<Ticket | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(featBooking());
   }, [dispatch]);
-
-  const showModal = (ticket: Ticket) => {
-    setSelectBooking(ticket);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (ticket: Ticket) => {
-    showModal(ticket);
-  };
-
-  const handleOk = (ticket: Ticket) => {
-    dispatch(UpdateBooking(ticket));
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleSort = (e) => {
-    setSortValue(e.target.value);
-  };
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
 
   const bookings = useSelector((state: RootState) => state.tickets.tickets);
 
@@ -74,7 +43,10 @@ export default function UserManagers() {
     .sort((a, b) => {
       if (sortValue === "price") return a.price - b.price;
       if (sortValue === "time")
-        return a.departure_time.getTime() - b.departure_time.getTime();
+        return (
+          new Date(a.departure_time).getTime() -
+          new Date(b.departure_time).getTime()
+        );
       return 0;
     });
 
@@ -96,6 +68,14 @@ export default function UserManagers() {
 
     XLSX.writeFile(workbook, "danh_sach_don_ve.xlsx");
   };
+
+  function formatISO(dateStr: string) {
+    const [datePart, timePart] = dateStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hour, minute] = timePart.split(":");
+
+    return `${hour}:${minute} - ${day}/${month}/${year}`;
+  }
 
   return (
     <div>
@@ -131,7 +111,11 @@ export default function UserManagers() {
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
         <div className="flex gap-4 justify-between">
           <Input
-            onChange={handleSearch}
+            onChange={(e) =>
+              setTimeout(() => {
+                setSearchText(e.target.value);
+              }, 500)
+            }
             prefix={<SearchOutlined />}
             placeholder="Tìm kiếm..."
             style={{ width: 250, padding: "8px 12px" }}
@@ -146,7 +130,8 @@ export default function UserManagers() {
             </div>
 
             <select
-              onClick={(e) => handleSort(e)}
+              value={sortValue}
+              onChange={(e) => setSortValue(e.target.value)}
               className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-35 justify-center"
               name=""
               id=""
@@ -162,8 +147,9 @@ export default function UserManagers() {
               onChange={(e) => setSeatFilter(e.target.value)}
             >
               <option value="">Tất cả loại ghế</option>
+              <option value="LUXURY">LUXURY</option>
               <option value="VIP">VIP</option>
-              <option value="Normal">Normal</option>
+              <option value="STANDARD">STANDARD</option>
             </select>
 
             <select
@@ -199,14 +185,14 @@ export default function UserManagers() {
             title="Giờ đi"
             dataIndex="departure_time"
             key="departure_time"
-            render={(value: Date) => value.toLocaleString()}
+            render={(value) => formatISO(value)}
           />
 
           <Column
             title="Giờ đến"
             dataIndex="arrival_time"
             key="arrival_time"
-            render={(value: Date) => value.toLocaleString()}
+            render={(value) => formatISO(value)}
           />
           <Column title="Loại ghế" dataIndex="seat_type" key="seat_type" />
           <Column title="Giá" dataIndex="price" key="price" />
@@ -225,43 +211,16 @@ export default function UserManagers() {
             title="Ngày tạo"
             dataIndex="created_at"
             key="created_at"
-            render={(value: Date) => value.toLocaleString()}
+            render={(value) => formatISO(value)}
           />
           <Column
             title="Ngày cập nhật"
             dataIndex="updated_at"
             key="updated_at"
-            render={(value: Date) => value.toLocaleString()}
-          />
-          <Column
-            title="Hành động"
-            key="action"
-            render={(_, record: Ticket) => (
-              <Space>
-                <Button
-                  style={{ fontSize: "20px" }}
-                  icon={<DeleteOutlined />}
-                  danger
-                  type="link"
-                ></Button>
-                <Button
-                  style={{ fontSize: "20px" }}
-                  icon={<EditOutlined />}
-                  onClick={() => handleEdit(record)}
-                  danger
-                  type="link"
-                ></Button>
-              </Space>
-            )}
+            render={(value) => formatISO(value)}
           />
         </Table>
       </div>
-      <ModalBooking
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        initial={selectBooking ?? undefined}
-      />
     </div>
   );
 }
