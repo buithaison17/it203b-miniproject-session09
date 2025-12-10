@@ -10,9 +10,9 @@ export interface BusCompany {
 export interface Bus {
   id: string;
   company_id: string;
-  name: string;
+  bus_name: string;
   descriptions: string;
-  license_plate: String;
+  license_plate: string;
   capacity: number;
   created_at: Date;
   updated_at: Date;

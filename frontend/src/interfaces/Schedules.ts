@@ -13,14 +13,15 @@ export interface Schedules {
 
 export interface Ticket {
   id: string;
-  bus_id: string;
   schedule_id: string;
   seat_id: string;
+  bus_id: string;
+  phone: string;
   departure_time: Date;
   arrival_time: Date;
-  seat_type: string;
+  seat_type: "LUXURY" | "VIP" | "STANDARD";
   price: number;
-  status: "booked" | "cancelled";
+  status: "Booked" | "Cancelled";
   created_at: Date;
   updated_at: Date;
 }
