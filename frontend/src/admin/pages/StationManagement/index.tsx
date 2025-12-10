@@ -16,20 +16,20 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-import { useAppSelector, useAppDispatch } from "../../stores/store";
+import { useAppSelector, useAppDispatch } from "../../../stores/store";
 import {
   fetchStationsThunk,
   addStationThunk,
   updateStationThunk,
   deleteStationThunk,
-} from "../../slices/stationSlice";
-import type { Station } from "../../interfaces/Station"; // Tái sử dụng
-import StationModal from "../components/Modals/Stations/StationModal"; // Component Modal đã hoàn thiện
+} from "../../../stores/stationSlice";
+import type { Station } from "../../../interfaces/Station"; // Tái sử dụng
+import StationModal from "../../components/Modals/Stations/StationModal"; // Component Modal đã hoàn thiện
 
-import home from "../../assets/icons/home-icon.png";
-import hide from "../../assets/icons/icon_hide.png";
-import logout from "../../assets/icons/Icon-out.png";
-import excel from "../../assets/icons/excel-logo.png";
+import home from "../../../assets/icons/home-icon.png";
+import hide from "../../../assets/icons/icon_hide.png";
+import logout from "../../../assets/icons/Icon-out.png";
+import excel from "../../../assets/icons/excel-logo.png";
 
 const { Column } = Table;
 
@@ -37,12 +37,12 @@ const formatDateTime = (dateString: string): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "N/A"; // Xử lý trường hợp ngày không hợp lệ
-    return date.toLocaleString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch (e) {
     return "N/A";
@@ -100,58 +100,62 @@ export default function StationManager() {
 
   const generateNewStationId = () => {
     const bxIds = stations
-        .map(s => s.id)
-        .filter(id => id.startsWith('BX')) 
-        .map(id => parseInt(id.replace('BX', ''))) 
-        .filter(num => !isNaN(num)); 
-    
+      .map((s) => s.id)
+      .filter((id) => id.startsWith("BX"))
+      .map((id) => parseInt(id.replace("BX", "")))
+      .filter((num) => !isNaN(num));
+
     const maxNum = bxIds.length > 0 ? Math.max(...bxIds) : 0;
     const newIdNum = maxNum + 1;
 
-    const paddedNum = String(newIdNum).padStart(3, '0');
-    
+    const paddedNum = String(newIdNum).padStart(3, "0");
+
     return `BX${paddedNum}`;
-};
+  };
 
   // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
   const handleAdd = () => {
-        const now = new Date().toISOString();
-        const newId = generateNewStationId(); // Vẫn tạo ID chuẩn ở Frontend
-        
-        // Gán dữ liệu cơ sở cho Modal
-        setEditingStation({ 
-            id: newId, 
-            name: '', location: '', descriptions: '', phone: '',
-            image: null, wallpaper: null,
-            created_at: now, 
-            updated_at: now,
-        } as any); 
-        
-        setIsEditingMode(false); // <--- QUAN TRỌNG: Đặt chế độ THÊM MỚI (FALSE)
-        setIsModalVisible(true);
-    };
+    const now = new Date().toISOString();
+    const newId = generateNewStationId(); // Vẫn tạo ID chuẩn ở Frontend
 
-    const handleEdit = (station: Station) => {
-        setEditingStation(station); // Chế độ sửa
-        setIsEditingMode(true); // <--- QUAN TRỌNG: Đặt chế độ SỬA (TRUE)
-        setIsModalVisible(true);
-    };
+    // Gán dữ liệu cơ sở cho Modal
+    setEditingStation({
+      id: newId,
+      name: "",
+      location: "",
+      descriptions: "",
+      phone: "",
+      image: null,
+      wallpaper: null,
+      created_at: now,
+      updated_at: now,
+    } as any);
 
-    const handleSave = (stationData: Station) => {
-        // Dùng state isEditingMode để quyết định API nào cần gọi
-        if (isEditingMode) { 
-            // Gọi UPDATE (PUT)
-            dispatch(updateStationThunk(stationData));
-            message.success("Đang cập nhật bến xe...");
-        } else {
-            // Gọi ADD (POST)
-            dispatch(addStationThunk(stationData));
-            message.success("Đang thêm bến xe...");
-        }
-        
-        setIsModalVisible(false);
-        setEditingStation(null);
-    };
+    setIsEditingMode(false); // <--- QUAN TRỌNG: Đặt chế độ THÊM MỚI (FALSE)
+    setIsModalVisible(true);
+  };
+
+  const handleEdit = (station: Station) => {
+    setEditingStation(station); // Chế độ sửa
+    setIsEditingMode(true); // <--- QUAN TRỌNG: Đặt chế độ SỬA (TRUE)
+    setIsModalVisible(true);
+  };
+
+  const handleSave = (stationData: Station) => {
+    // Dùng state isEditingMode để quyết định API nào cần gọi
+    if (isEditingMode) {
+      // Gọi UPDATE (PUT)
+      dispatch(updateStationThunk(stationData));
+      message.success("Đang cập nhật bến xe...");
+    } else {
+      // Gọi ADD (POST)
+      dispatch(addStationThunk(stationData));
+      message.success("Đang thêm bến xe...");
+    }
+
+    setIsModalVisible(false);
+    setEditingStation(null);
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteStationThunk(id));
@@ -161,23 +165,23 @@ export default function StationManager() {
 
   const handleExportExcel = () => {
     if (filteredAndSortedStations.length === 0) {
-      message.warning('Không có dữ liệu để xuất file.');
+      message.warning("Không có dữ liệu để xuất file.");
       return;
     }
-    
+
     // Chuẩn bị dữ liệu để xuất file (chỉ lấy các trường cần thiết)
-    const exportData = filteredAndSortedStations.map(s => ({
-        ID: s.id,
-        'Tên Bến Xe': s.name,
-        'Địa Chỉ': s.location,
-        'Mô Tả': s.descriptions,
-        'Số ĐT': s.phone,
-        'Ngày Tạo': formatDateTime(s.created_at),
-        'Ngày Cập Nhật': formatDateTime(s.updated_at),
+    const exportData = filteredAndSortedStations.map((s) => ({
+      ID: s.id,
+      "Tên Bến Xe": s.name,
+      "Địa Chỉ": s.location,
+      "Mô Tả": s.descriptions,
+      "Số ĐT": s.phone,
+      "Ngày Tạo": formatDateTime(s.created_at),
+      "Ngày Cập Nhật": formatDateTime(s.updated_at),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
-    
+
     // Thiết lập độ rộng cột (Tùy chọn)
     worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 25 }));
 
@@ -185,11 +189,14 @@ export default function StationManager() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Ben_Xe");
 
     try {
-        XLSX.writeFile(workbook, "Danh_sach_Ben_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx");
-        message.success('Đã xuất file Excel thành công!');
+      XLSX.writeFile(
+        workbook,
+        "Danh_sach_Ben_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
+      );
+      message.success("Đã xuất file Excel thành công!");
     } catch (e) {
-        message.error('Lỗi khi xuất file Excel.');
-        console.error(e);
+      message.error("Lỗi khi xuất file Excel.");
+      console.error(e);
     }
   };
 

@@ -1,9 +1,9 @@
-import home from "../../assets/icons/home-icon.png";
-import hide from "../../assets/icons/icon_hide.png";
-import logout from "../../assets/icons/Icon-out.png";
-import excel from "../../assets/icons/excel-logo.png";
+import home from "../../../assets/icons/home-icon.png";
+import hide from "../../../assets/icons/icon_hide.png";
+import logout from "../../../assets/icons/Icon-out.png";
+import excel from "../../../assets/icons/excel-logo.png";
 import { Button, Input, Space, Table, Tag } from "antd";
-import type { Ticket } from "../../interfaces/Schedules";
+import type { Ticket } from "../../../interfaces/Schedules";
 import * as XLSX from "xlsx";
 import {
   DeleteOutlined,
@@ -12,9 +12,9 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../stores/store";
-import { featBooking, UpdateBooking } from "../../apis/booking.api";
-import ModalBooking from "../components/Modals/Orders/ModalBooking";
+import type { AppDispatch, RootState } from "../../../stores/store";
+import { featBooking, UpdateBooking } from "../../../apis/booking.api";
+import ModalBooking from "../../components/Modals/Orders/ModalBooking";
 
 export default function UserManagers() {
   const { Column } = Table;
