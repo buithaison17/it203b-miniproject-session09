@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../stores/store";
-import { featBooking } from "../../apis/booking.api";
+import { featBooking, UpdateBooking } from "../../apis/booking.api";
 import ModalBooking from "../components/Modals/Orders/ModalBooking";
 
 export default function UserManagers() {
@@ -22,14 +22,25 @@ export default function UserManagers() {
   const [sortValue, setSortValue] = useState("all");
   const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
-  const [selectBooking,setSelectBooking] = useState<Ticket | null>(null)
+  const [selectBooking, setSelectBooking] = useState<Ticket | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const showModal = () => {
+  useEffect(() => {
+    dispatch(featBooking());
+  }, [dispatch]);
+
+  const showModal = (ticket: Ticket) => {
+    setSelectBooking(ticket);
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleEdit = (ticket: Ticket) => {
+    showModal(ticket);
+  };
+
+  const handleOk = (ticket: Ticket) => {
+    dispatch(UpdateBooking(ticket));
     setIsModalOpen(false);
   };
 
@@ -43,11 +54,6 @@ export default function UserManagers() {
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
-
-  const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    dispatch(featBooking());
-  }, [dispatch]);
 
   const bookings = useSelector((state: RootState) => state.tickets.tickets);
 
@@ -187,7 +193,7 @@ export default function UserManagers() {
             dataIndex="schedule_id"
             key="schedule_id"
           />
-          <Column title="Ghế" dataIndex="seat_id" key="seat_id" />
+          <Column title="Mã Ghế" dataIndex="seat_id" key="seat_id" />
 
           <Column
             title="Giờ đi"
@@ -241,7 +247,7 @@ export default function UserManagers() {
                 <Button
                   style={{ fontSize: "20px" }}
                   icon={<EditOutlined />}
-                  onClick={showModal}
+                  onClick={() => handleEdit(record)}
                   danger
                   type="link"
                 ></Button>
@@ -251,11 +257,11 @@ export default function UserManagers() {
         </Table>
       </div>
       <ModalBooking
-      open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      inittal={selectBooking}
-      ></ModalBooking>
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        initial={selectBooking ?? undefined}
+      />
     </div>
   );
 }
