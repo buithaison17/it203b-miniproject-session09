@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// Import theo style bạn đang dùng
 import Bus from "../assets/icons/bus.png";
 import Mail from "../assets/icons/email-icon.png";
 import Phone from "../assets/icons/call-icon.png";
@@ -9,7 +8,6 @@ import Logo from "../assets/icons/logo-web.png";
 import MenuBar from "../assets/icons/Component 3.png";
 import LogoSearch from "../assets/icons/search.png";
 
-// Import CSS
 import "../components/styles/layouts.css";
 
 export default function Header() {
