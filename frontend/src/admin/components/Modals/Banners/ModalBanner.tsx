@@ -14,7 +14,7 @@ interface ModalBookingProps {
   initial?: Partial<Ticket>;
 }
 
-export default function ModalBooking({
+export default function ModalBanner({
   open,
   onOk,
   onCancel,
@@ -23,9 +23,9 @@ export default function ModalBooking({
   const [form] = Form.useForm();
   const dispatch = useDispatch<AppDispatch>();
 
-      useEffect(() => {
-      dispatch(featBooking());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(featBooking());
+  }, [dispatch]);
 
   return (
     <Modal
@@ -104,5 +104,3 @@ export default function ModalBooking({
     </Modal>
   );
 }
-
-

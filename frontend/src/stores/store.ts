@@ -1,20 +1,24 @@
 import { configureStore } from "@reduxjs/toolkit";
-import bookingSlice from "../apis/booking.api";
-import stationReducer from "./stationSlice";
-import {
-  useDispatch,
-  useSelector,
-  type TypedUseSelectorHook,
-} from "react-redux";
+import  BookingSlice   from "../apis/booking.api";
+import RoutesSlice  from "../apis/routes.api";
+import BusCompanySlice  from "../apis/bus_companies.api";
+import  CancelSlice  from "../apis/cancelled_tickets.api";
+import  ReviewSlice  from "../apis/reviews.api";
+import  BusSlice  from "../apis/buses.api";
+import  ScheduleSlice  from "../apis/schedule.api";
+import StationSlice from "./stationSlice";
 export const store = configureStore({
   reducer: {
-    stations: stationReducer,
-    tickets: bookingSlice,
+    tickets : BookingSlice,
+    routes : RoutesSlice,
+    busCompanys : BusCompanySlice,
+    buses : BusSlice,
+    cancelTickets : CancelSlice,
+    reviews : ReviewSlice,
+    schedules : ScheduleSlice,
+    station : StationSlice
   },
 });
-export default store;
+export default store
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export const useAppDispatch: () => AppDispatch = useDispatch;
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

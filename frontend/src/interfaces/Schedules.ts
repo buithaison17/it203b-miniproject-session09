@@ -30,8 +30,19 @@ export interface CancellationPolicies {
   id: string;
   descriptions: string;
   route_id: string;
+  ticket_id: string;
   cancellation_time_limit: string;
   refund_percentage: number;
   created_at: Date;
   updated_at: Date;
+}
+
+export interface Review {
+  review_id: string;       
+  user_id: string;        
+  bus_id: string;        
+  rating: number;          
+  review: string;        
+  created_at: string;    
+  updated_at: string;      
 }
