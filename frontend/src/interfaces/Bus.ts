@@ -3,6 +3,8 @@ export interface BusCompany {
   name: string;
   image: string;
   descriptions: string;
+  phone: string;
+  license: string;
   created_at: Date;
   updated_at: Date;
 }
