@@ -16,14 +16,7 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { useAppSelector, useAppDispatch } from "../../stores/store";
-import {
-  fetchStationsThunk,
-  addStationThunk,
-  updateStationThunk,
-  deleteStationThunk,
-} from "../../slices/stationSlice";
-import type { Station } from "../../interfaces/Station"; // Tái sử dụng
-import StationModal from "../components/Modals/Stations/StationModal"; 
+
 
 import home from "../../assets/icons/home-icon.png";
 import hide from "../../assets/icons/icon_hide.png";
@@ -48,7 +41,7 @@ const formatDateTime = (dateString: string): string => {
   }
 };
 
-export default function StationManager() {
+export default function BusCompanyManager() {
   const dispatch = useAppDispatch();
   const { stations, loading, error } = useAppSelector(
     (state) => state.stations
@@ -98,63 +91,24 @@ export default function StationManager() {
   }, [stations, searchTerm, sortType, filterLocation]);
 
   const generateNewStationId = () => {
-    const bxIds = stations
+    const nxIds = stations
         .map(s => s.id)
-        .filter(id => id.startsWith('BX')) 
-        .map(id => parseInt(id.replace('BX', ''))) 
+        .filter(id => id.startsWith('NX')) 
+        .map(id => parseInt(id.replace('NX', ''))) 
         .filter(num => !isNaN(num)); 
     
-    const maxNum = bxIds.length > 0 ? Math.max(...bxIds) : 0;
+    const maxNum = nxIds.length > 0 ? Math.max(...nxIds) : 0;
     const newIdNum = maxNum + 1;
 
     const paddedNum = String(newIdNum).padStart(3, '0');
     
-    return `BX${paddedNum}`;
+    return `NX${paddedNum}`;
 };
 
   // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
-  const handleAdd = () => {
-        const now = new Date().toISOString();
-        const newId = generateNewStationId(); 
-        
-        // Gán dữ liệu cơ sở cho Modal
-        setEditingStation({ 
-            id: newId, 
-            name: '', location: '', descriptions: '', phone: '',
-            image: null, wallpaper: null,
-            created_at: now, 
-            updated_at: now,
-        } as any); 
-        
-        setIsEditingMode(false); 
-        setIsModalVisible(true);
-    };
+  
 
-    const handleEdit = (station: Station) => {
-        setEditingStation(station); // Chế độ sửa
-        setIsEditingMode(true); 
-        setIsModalVisible(true);
-    };
-
-    const handleSave = (stationData: Station) => {
-        // Dùng state isEditingMode để quyết định API nào cần gọi
-        if (isEditingMode) { 
-            dispatch(updateStationThunk(stationData));
-            message.success("Đang cập nhật bến xe...");
-        } else {
-            dispatch(addStationThunk(stationData));
-            message.success("Đang thêm bến xe...");
-        }
-        
-        setIsModalVisible(false);
-        setEditingStation(null);
-    };
-
-  const handleDelete = (id: string) => {
-    dispatch(deleteStationThunk(id));
-    message.loading("Đang xóa bến xe...", 0.5);
-    console.log("Xóa ID:", id);
-  };
+    
 
   const handleExportExcel = () => {
     if (filteredAndSortedStations.length === 0) {
