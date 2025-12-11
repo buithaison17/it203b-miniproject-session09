@@ -1,10 +1,12 @@
 export interface BusCompany {
   id: string;
   name: string;
-  image: string;
+  image: string | null;
   descriptions: string;
-  created_at: Date;
-  updated_at: Date;
+  phone: string;
+  license: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Bus {
