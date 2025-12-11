@@ -18,7 +18,7 @@ export default function BusCompany() {
       {/* TITLE */}
       <div className="flex justify-center items-center gap-2 mb-6">
         <div className="w-[3px] h-[40px] bg-yellow-400"></div>
-        <h2 className="text-4xl font-bold">NHÀ XE</h2>
+        <h2 className="pt-10 text-4xl font-bold">NHÀ XE</h2>
       </div>
 
       {/* GRID CARDS */}
