@@ -40,6 +40,67 @@
       "created_at": "2025-01-08T13:30:00",
       "updated_at": "2025-01-08T13:30:00"
     }
+  ], "schedules": [
+    {
+      "id": "sch1",
+      "route_id": "R001",
+      "bus_id": "bus_01",
+      "departure_time": "2025-12-11T08:00:00.000Z",
+      "arrival_time": "2025-12-11T12:00:00.000Z",
+      "available_seat": 30,
+      "total_seats": 40,
+      "status": "AVAILABLE",
+      "created_at": "2025-12-01T10:00:00.000Z",
+      "updated_at": "2025-12-05T12:00:00.000Z"
+    },
+    {
+      "id": "sch2",
+      "route_id": "R002",
+      "bus_id": "bus_02",
+      "departure_time": "2025-12-11T09:30:00.000Z",
+      "arrival_time": "2025-12-11T13:30:00.000Z",
+      "available_seat": 0,
+      "total_seats": 40,
+      "status": "FULL",
+      "created_at": "2025-12-02T11:00:00.000Z",
+      "updated_at": "2025-12-06T14:00:00.000Z"
+    },
+    {
+      "id": "sch3",
+      "route_id": "R001",
+      "bus_id": "bus3",
+      "departure_time": "2025-12-12T07:00:00.000Z",
+      "arrival_time": "2025-12-12T11:00:00.000Z",
+      "available_seat": 15,
+      "total_seats": 40,
+      "status": "AVAILABLE",
+      "created_at": "2025-12-03T09:00:00.000Z",
+      "updated_at": "2025-12-07T13:00:00.000Z"
+    },
+    {
+      "id": "sch4",
+      "route_id": "R003",
+      "bus_id": "bus4",
+      "departure_time": "2025-12-12T10:00:00.000Z",
+      "arrival_time": "2025-12-12T14:00:00.000Z",
+      "available_seat": 40,
+      "total_seats": 40,
+      "status": "AVAILABLE",
+      "created_at": "2025-12-04T08:00:00.000Z",
+      "updated_at": "2025-12-08T10:00:00.000Z"
+    },
+    {
+      "id": "sch5",
+      "route_id": "R001",
+      "bus_id": "bus5",
+      "departure_time": "2025-12-13T06:30:00.000Z",
+      "arrival_time": "2025-12-13T10:30:00.000Z",
+      "available_seat": 0,
+      "total_seats": 40,
+      "status": "CANCELLED",
+      "created_at": "2025-12-05T07:00:00.000Z",
+      "updated_at": "2025-12-09T09:00:00.000Z"
+    }
   ],
 
   "buses": [
@@ -143,7 +204,7 @@
     }
   ],
 
-  "cancellation_policies": [
+  "cancelled_tickets": [
     {
       "cancellation_policies_id": "C001",
       "descriptions": "Hủy trước 2 giờ hoàn 50%",
@@ -168,9 +229,9 @@
 
   "routes": [
     {
-      "routes_id": "R001",
-      "departure_station_id": "ST01",
-      "arrival_station_id": "ST02",
+      "id": "R001",
+      "departure_station_name": "HÀ Nội",
+      "arrival_station_name": "Capmpuchia",
       "price": 250000,
       "duration": 180,
       "distance": 150,
@@ -178,9 +239,9 @@
       "updated_at": "2025-01-05T07:00:00"
     },
     {
-      "routes_id": "R002",
-      "departure_station_id": "ST03",
-      "arrival_station_id": "ST04",
+      "id": "R002",
+      "departure_station_name": "Hà Giang",
+      "arrival_station_name": "Hà Nội",
       "price": 320000,
       "duration": 240,
       "distance": 200,
@@ -193,7 +254,7 @@
     {
       "id": "T001",
       "bus_id": "bus_01",
-      "schedule_id": "S001",
+      "schedule_id": "sch1",
       "price": 300000,
       "seat_id": "A01",
       "seat_type": "Giường nằm",
@@ -206,11 +267,11 @@
     {
       "id": "T002",
       "bus_id": "bus_02",
-      "schedule_id": "S002",
+      "schedule_id": "sch2",
       "price": 450000,
       "seat_id": "B03",
       "seat_type": "Limousine",
-      "status": "booked",
+      "status": "Cancelled",
       "departure_time": "2025-01-22T14:00:00",
       "arrival_time": "2025-01-22T17:30:00",
       "created_at": "2025-01-11T11:20:00",
@@ -219,7 +280,7 @@
     {
       "id": "T003",
       "bus_id": "bus_03",
-      "schedule_id": "S003",
+      "schedule_id": "sch3",
       "price": 200000,
       "seat_id": "C05",
       "seat_type": "Ghế ngồi",
@@ -232,7 +293,7 @@
     {
       "id": "T004",
       "bus_id": "bus_03",
-      "schedule_id": "S004",
+      "schedule_id": "sch1",
       "price": 200000,
       "seat_id": "C06",
       "seat_type": "Ghế ngồi",
@@ -245,7 +306,7 @@
     {
       "id": "T005",
       "bus_id": "bus_02",
-      "schedule_id": "S005",
+      "schedule_id": "sch2",
       "price": 450000,
       "seat_id": "B08",
       "seat_type": "Limousine",

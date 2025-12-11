@@ -2,12 +2,9 @@ import home from "../../assets/icons/home-icon.png";
 import hide from "../../assets/icons/icon_hide.png";
 import logout from "../../assets/icons/Icon-out.png";
 import excel from "../../assets/icons/excel-logo.png";
-import { Button, Input, Space, Table, Tag } from "antd";
-import type { Ticket } from "../../interfaces/Schedules";
+import { Button, Input, Space, Table } from "antd";
 import * as XLSX from "xlsx";
-import {
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { featBooking } from "../../apis/booking.api";
@@ -17,6 +14,7 @@ import { featBusCompany } from "../../apis/bus_companies.api";
 import { featCancelTickets } from "../../apis/cancelled_tickets.api";
 import { featReview } from "../../apis/reviews.api";
 import { featBus } from "../../apis/buses.api";
+import { featSchedule } from "../../apis/schedule.api";
 
 export default function AdminReport() {
   const { Column } = Table;
@@ -25,9 +23,7 @@ export default function AdminReport() {
   const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
 
-
-    const dispatch = useDispatch<AppDispatch>();
-    
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(featRoutes());
@@ -36,57 +32,133 @@ export default function AdminReport() {
     dispatch(featReview());
     dispatch(featBus());
     dispatch(featBooking());
+    dispatch(featSchedule());
   }, [dispatch]);
-  
+
   const bookings = useSelector((state: RootState) => state.tickets.tickets);
   const routes = useSelector((state: RootState) => state.routes.routes);
-  const busCompanys = useSelector((state: RootState) => state.busCompanys.busCompany);
+  const schedules = useSelector(
+    (state: RootState) => state.schedules.schedules
+  );
+  const busCompanys = useSelector(
+    (state: RootState) => state.busCompanys.busCompany
+  );
   const buses = useSelector((state: RootState) => state.buses.buses);
   const reviews = useSelector((state: RootState) => state.reviews.reviews);
-  const cancelTickets = useSelector((state: RootState) => state.cancelTickets.cancelTickets);
-  
+  const cancelTickets = useSelector(
+    (state: RootState) => state.cancelTickets.cancelTickets
+  );
 
-  
+  const tripInfo = bookings.map((booking) => {
+    const bus = buses?.find((b) => b.id === booking.bus_id);
+    const company = busCompanys?.find(
+      (c) => c.bus_companies_id === bus?.company_id
+    );
+    const schedule = schedules?.find((sch) => sch.id === booking.schedule_id);
+    const route = schedule
+      ? routes?.find(
+          (r) =>
+            r.id === schedule.route_id &&
+            r.arrival_station_name &&
+            r.departure_station_name
+        )
+      : undefined;
 
-const trip = bookings.map((booking) => {
-  
-  const bus = buses.find(b => b.id === booking.bus_id);
+    const routeTrip = route
+      ? `${route.departure_station_name} → ${route.arrival_station_name}`
+      : "Chưa có thông tin";
 
- 
-  const company = busCompanys.find(c => c.bus_companies_id === bus?.company_id);
+    const sameBusBookings = bookings.filter(
+      (b) =>
+        b.bus_id === booking.bus_id && b.schedule_id === booking.schedule_id
+    );
 
-  
-  const sameBusBookings = bookings.filter(b => b.bus_id === booking.bus_id);
+    console.log(sameBusBookings);
 
-  const totalTickets = sameBusBookings.length;
-  const cancelledTickets = sameBusBookings.filter(b => b.status === "Cancelled").length;
-  const cancel_rate = totalTickets > 0 ? cancelledTickets / totalTickets : 0;
+    const totalTickets = sameBusBookings.length;
+    const cancelledTickets = sameBusBookings.filter(
+      (b) => b.status === "Cancelled"
+    ).length;
+    const cancel_rate = totalTickets > 0 ? cancelledTickets / totalTickets : 0;
 
-  const reviewList = reviews.filter(r => r.bus_id === booking.bus_id);
-  const avgReview =
-    reviewList.length > 0
-      ? reviewList.reduce((sum, r) => sum + r.rating, 0) / reviewList.length
-      : 0;
+    const reviewList = reviews?.filter((r) => r.bus_id === booking.bus_id);
+    const avgReview =
+      reviewList?.length > 0
+        ? reviewList.reduce((sum, r) => sum + r.rating, 0) / reviewList.length
+        : 0;
 
-  return {
-    ...booking,
-    bus_name: bus?.bus_name ?? null,
-    company_name: company?.company_name ?? null,
-    cancel_rate,
-    review_score: avgReview,
-  };
-});
+    return {
+      id: booking.id,
+      bus_name: bus?.bus_name ?? "",
+      company_name: company?.company_name ?? "",
+      route: routeTrip,
+      total_ticket: totalTickets,
+      cancel_rate,
+      review_score: avgReview,
+      price: booking.price,
+      date: booking.arrival_time,
+    };
+  });
 
+  const groupTripInfo = Object.values(
+    tripInfo.reduce(
+      (acc, ticket) => {
+        const key = `${ticket.company_name}-${ticket.route}`;
+        if (!acc[key]) {
+          acc[key] = {
+            company_name: ticket.company_name,
+            route: ticket.route,
+            total_ticket: 0,
+            total_price: 0,
+            cancel_rate_sum: 0,
+            review_score_sum: 0,
+            review_count: 0,
+          };
+        }
+        acc[key].total_ticket += ticket.total_ticket;
+        acc[key].total_price += ticket.price;
+        acc[key].cancel_rate_sum += ticket.cancel_rate * ticket.total_ticket;
+        acc[key].review_score_sum += ticket.review_score * ticket.total_ticket;
+        acc[key].review_count += ticket.total_ticket;
 
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          company_name: string;
+          route: string;
+          total_ticket: number;
+          total_price: number;
+          cancel_rate_sum: number;
+          review_score_sum: number;
+          review_count: number;
+        }
+      >
+    )
+  ).map((item) => ({
+    company_name: item.company_name,
+    route: item.route,
+    total_ticket: item.total_ticket,
+    cancel_rate:
+      item.total_ticket > 0 ? item.cancel_rate_sum / item.total_ticket : 0,
+    review_score:
+      item.review_count > 0 ? item.review_score_sum / item.review_count : 0,
+    price: item.total_price,
+  }));
 
-
-console.log(trip);
-
-
-
-
-  
-
+  const totalByBusArray = Object.values(
+    tripInfo.reduce((acc, ticket) => {
+      if (!acc[ticket.company_name]) {
+        acc[ticket.company_name] = {
+          company_name: ticket.company_name,
+          total: 0,
+        };
+      }
+      acc[ticket.company_name].total += ticket.price;
+      return acc;
+    }, {} as Record<string, { company_name: string; total: number }>)
+  );
 
   const filteredData = bookings
     .filter((b) => {
@@ -214,9 +286,12 @@ console.log(trip);
         <div className="flex justify-around">
           <div className="w-100">
             <div>
-              <Table<Ticket>
+              <Table
+                rowKey="id"
                 pagination={false}
-                dataSource={filteredData.slice(0, 5)}
+                dataSource={totalByBusArray
+                  .slice(0, 5)
+                  .sort((a, b) => b.total - a.total)}
               >
                 <Column
                   title="Xếp hạng"
@@ -224,11 +299,15 @@ console.log(trip);
                   render={(_, __, index) => index + 1}
                 />
 
-                <Column title="Tên" dataIndex="id" key="id" />
+                <Column
+                  title="Tên"
+                  dataIndex="company_name"
+                  key="company_name"
+                />
                 <Column
                   title="Doanh thu"
-                  dataIndex="price"
-                  key="schedule_id"
+                  dataIndex="total"
+                  key="total"
                   render={(value) => value.toLocaleString("vi-VN")}
                 />
               </Table>
@@ -239,48 +318,51 @@ console.log(trip);
             </div>
           </div>
 
-          <Table<Ticket> pagination={{ pageSize: 5 }} dataSource={filteredData}>
+          <Table
+            rowKey="id"
+            pagination={{ pageSize: 5 }}
+            dataSource={groupTripInfo}
+          >
             <Column
               title="STT"
               key="index"
               render={(_, __, index) => index + 1}
             />
-
-            <Column title="Tuyến " dataIndex="id" key="id" />
-            <Column title="Nhà xe" dataIndex="schedule_id" key="schedule_id" />
-            <Column title="Vé bán ra" dataIndex="seat_id" key="seat_id" />
-
+            <Column title="Tuyến" dataIndex="route" key="route" />
+            <Column
+              title="Nhà xe"
+              dataIndex="company_name"
+              key="company_name"
+            />
+            <Column
+              title="Vé bán ra"
+              dataIndex="total_ticket"
+              key="total_ticket"
+            />
             <Column
               title="Tỷ lệ hủy"
-              dataIndex="created_at"
-              key="created_at"
-              render={(value: Date) => value.toLocaleString()}
+              dataIndex="cancel_rate"
+              key="cancel_rate"
+              render={(value) => `${(value * 100).toFixed(0)} %`}
             />
             <Column
               title="Đánh giá"
-              dataIndex="updated_at"
-              key="updated_at"
-              render={(value: Date) => value.toLocaleString()}
+              dataIndex="review_score"
+              key="review_score"
+              render={(value) => value.toFixed(1)}
             />
             <Column
               title="Doanh thu"
-              dataIndex="updated_at"
-              key="updated_at"
-              render={(value) => value.toLocaleString()}
+              dataIndex="price"
+              key="price"
+              render={(value) => value.toLocaleString("vi-VN")}
             />
             <Column
               title="Hành động"
               key="action"
-              render={(_, record: Ticket) => (
+              render={(_, record) => (
                 <Space>
-                  <Button
-                    type="link"
-                    className="px-3 py-1 rounded-lg border border-gray-300 
-             text-gray-700 hover:bg-gray-200 
-             transition-all duration-200 shadow-sm"
-                  >
-                    Chi tiết
-                  </Button>
+                  <Button type="link">Chi tiết</Button>
                 </Space>
               )}
             />
