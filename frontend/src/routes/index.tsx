@@ -23,6 +23,7 @@ import CheckticketScreen from "../pages/CheckTicket";
 import PostScreen from "../pages/Post";
 import Station from "../pages/Information/Station/Station";
 
+
 export const routers = createBrowserRouter([
   {
     path: "/",
@@ -121,6 +122,25 @@ export const routers = createBrowserRouter([
         path: "trip",
         element: <TripManagementScreen />,
       },
+    ],
+  },
+  {
+    path: "/admin",
+    element: <AdminManager />,
+
+    children: [
+      {
+        path: "order",
+        element: <OderManager />,
+      },
+      {
+        path: "report",
+        element: <AdminReport />,
+      },
+      {
+        path: "station",
+        element: <StationManagers />,
+      }
     ],
   },
 ]);

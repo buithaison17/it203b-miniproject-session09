@@ -1,6 +1,6 @@
 export interface BusCompany {
-  id: string;
-  name: string;
+  bus_companies_id: string;
+  company_name: string;
   image: string;
   descriptions: string;
   phone: string;
