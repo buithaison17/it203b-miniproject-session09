@@ -8,7 +8,6 @@ const Layout = (): React.ReactElement => {
     <div className="min-h-screen flex flex-col font-sans">
       <Header />
 
-      <div className="h-10"></div>
 
       <main className="flex-1">
         <Outlet />
