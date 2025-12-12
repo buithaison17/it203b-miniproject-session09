@@ -1,72 +1,73 @@
 import { useEffect, useState } from "react";
 import RangeSlider from "../../components/RangeSlider/RangeSlider";
 import CardItem from "./CardItem";
-import BookingModal from "./BookingModal";
-import { storage } from "../../utils/storage";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
-import type { Station } from "../../interfaces/Station";
-import type { Bus, BusCompany, Seat } from "../../interfaces/Bus";
+import type { Bus, Seat } from "../../interfaces/Bus";
 import type { Schedules } from "../../interfaces/Schedules";
-import type { Payment, PaymentProvider } from "../../interfaces/Payment";
 import type { Routes } from "../../interfaces/Routes";
 import { db } from "./mockData";
 import { find } from "../../utils/find";
+import Search from "../../components/Search";
+import { useAppDispatch, useAppSelector } from "../../hooks/CustomHook";
+import { featBus } from "../../apis/buses.api";
+import { featSchedule } from "../../apis/schedule.api";
+import { featRoutes } from "../../apis/routes.api";
+import { filterScheduleData, setRoutesId } from "../../stores/searchSlice";
 
 export default function BookingScreen() {
-  const [stationsData, setStationsData] = useState<Station[]>([]);
+  //redux
+  const searchReducer = useAppSelector((state) => state.searchSlice);
+  const { routes, status: routesStatus } = useAppSelector(
+    (state) => state.routes
+  );
+  const { buses, status: busStatus } = useAppSelector((state) => state.buses);
+  const { schedules, status: schedulesStatus } = useAppSelector(
+    (state) => state.schedules
+  );
+  const dispatch = useAppDispatch();
+  //data
   const [busesData, setBusesData] = useState<Bus[]>([]);
   const [scheduleData, setScheduleData] = useState<Schedules[]>([]);
-  const [paymentProviderData, setPaymentProviderData] = useState<
-    PaymentProvider[]
-  >([]);
-  const [paymentData, setPaymentData] = useState<Payment[]>([]);
   const [seatsData, setSeatsData] = useState<Seat[]>([]);
   const [routesData, setRoutesData] = useState<Routes[]>([]);
-  const [busCompanyData, setBusCompanyData] = useState<BusCompany[]>([]);
 
   //fetch data
-  const fetchData = () => {
-    setStationsData(db.stations);
-    setBusesData(db.buses);
-    setScheduleData(db.schedules);
-    setSeatsData(db.seats);
-    setPaymentProviderData(db.paymentProviders);
-    setPaymentData(db.payments);
-    setRoutesData(db.routes);
-    setBusCompanyData(db.busCompanies);
+  const fetchData = async () => {
+    await dispatch(featBus());
+    await dispatch(featSchedule());
+    // dispatch ghế
+    await dispatch(featRoutes());
+  };
+
+  const filterData = async () => {
+    await dispatch(setRoutesId({ routesData }));
+    await dispatch(filterScheduleData({ scheduleData }));
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  // bokking modal
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [hasToken, setHasToken] = useState<boolean>(false);
-  const navigate = useNavigate();
   useEffect(() => {
-    setHasToken(storage.has("currentUser"));
-  }, []);
-  const bookingModal = () => {
-    // if (!hasToken) {
-    //   Swal.fire({
-    //     title: "Bạn cần đăng nhập!",
-    //     text: "Bạn cần đăng nhập để sử dụng chức năng đặt xe!",
-    //     icon: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     confirmButtonText: "Chuyển đến trang đăng nhập!",
-    //     cancelButtonText: "Huỷ!",
-    //   }).then((result) => {
-    //     if (result.isConfirmed) navigate("/");
-    //   });
-    // } else {
-    //   setIsOpenModal(isOpenModal ? false : true);
-    // }
-    setIsOpenModal(isOpenModal ? false : true);
-  };
+    if (
+      routesStatus === "fulfilled" &&
+      busStatus === "fulfilled" &&
+      schedulesStatus === "fulfilled"
+    ) {
+      setRoutesData(routes);
+      setBusesData(buses);
+      setScheduleData(schedules);
+      setSeatsData(db.seats);
+    }
+    filterData();
+  }, [
+    routes,
+    buses,
+    schedules,
+    routesData,
+    busesData,
+    scheduleData,
+    searchReducer.input,
+  ]);
 
   //aside content
   const popularCriteria = () => {
@@ -140,7 +141,16 @@ export default function BookingScreen() {
 
   return (
     <>
-      <main className="pl-[170px] pr-[170px] flex flex-col gap-4">
+      <main className="pl-[170px] pr-[170px] pt-12 pb-20 flex flex-col gap-4">
+        <div className="flex flex-col gap-6 mb-16">
+          <h1 className="text-[#1867AA] mx-auto font-bold text-2xl">
+            {searchReducer.input.departure}{" "}
+            <span className="font-normal">Đến</span>{" "}
+            {searchReducer.input.arrival}
+          </h1>
+          <Search />
+        </div>
+
         <div className="flex flex-row justify-center gap-4 align-middle items-center">
           <h4 className="text-[#428BCA] font-normal text-md/snug">
             Sắp xếp theo tuyến đường
@@ -166,26 +176,29 @@ export default function BookingScreen() {
           {popularCriteria()}
           <section className="w-full">
             <div className="flex flex-col gap-6">
-              {scheduleData.map((element, index) => {
-                const busElement = find.byKey(db.buses, "id", element.bus_id);
+              {searchReducer.schedulesFilter.length === 0 && (
+                <p className="text-center text-2xl font-bold">
+                  Hiện không có chuyến xe nào phù hợp!
+                </p>
+              )}
+              {searchReducer.schedulesFilter.map((element, index) => {
+                const busElement = find.byKey(busesData, "id", element.bus_id);
                 const routesElement = find.byKey(
-                  db.routes,
+                  routesData,
                   "id",
                   element.route_id
                 );
                 if (busElement && routesElement) {
-                  const seatsFilter = db.seats.filter(
-                    (item: Seat) =>
-                      item.status === "active" && item.bus_id === busElement.id
+                  const seatsFilter = seatsData.filter(
+                    (item: Seat) => item.bus_id === busElement.id
                   );
                   return (
                     <CardItem
                       key={index}
-                      bookingModal={bookingModal}
                       busesData={busElement}
                       scheduleData={element}
                       routesData={routesElement}
-                      totalSeats={seatsFilter ? seatsFilter.length : 0}
+                      seats={seatsFilter}
                     />
                   );
                 }
@@ -194,7 +207,6 @@ export default function BookingScreen() {
           </section>
         </div>
       </main>
-      {isOpenModal && <BookingModal bookingModal={bookingModal} />}
     </>
   );
 }

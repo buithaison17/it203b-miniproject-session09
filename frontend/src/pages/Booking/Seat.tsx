@@ -5,7 +5,7 @@ export default function Seat({ seat, isSelected, onClick }: any) {
     "w-10 h-10 flex items-center justify-center rounded cursor-pointer";
 
   const statusStyle =
-    seat.status === "booked"
+    seat.status === "booked" || seat.status === "inactive"
       ? "bg-gray-400 cursor-not-allowed"
       : isSelected
       ? "bg-green-500"
@@ -14,9 +14,9 @@ export default function Seat({ seat, isSelected, onClick }: any) {
   return (
     <div
       className={`${baseStyle} ${statusStyle} text-white`}
-      onClick={() => seat.status === "available" && onClick(seat)}
+      onClick={() => seat.status === "active" && onClick(seat)}
     >
-      {seat.number}
+      {seat.seat_number}
     </div>
   );
 }

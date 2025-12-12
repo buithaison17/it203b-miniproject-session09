@@ -32,8 +32,8 @@ export const stations: Station[] = [
 
 export const busCompanies: BusCompany[] = [
   {
-    id: "comp_01",
-    name: "Phương Trang (FUTA Bus Lines)",
+    bus_companies_id: "comp_01",
+    company_name: "Phương Trang (FUTA Bus Lines)",
     image: "https://example.com/futa_logo.png",
     descriptions:
       "Hãng xe khách uy tín hàng đầu Việt Nam với màu cam đặc trưng.",
@@ -43,8 +43,8 @@ export const busCompanies: BusCompany[] = [
     updated_at: new Date("2023-06-20T00:00:00Z"),
   },
   {
-    id: "comp_02",
-    name: "Thành Bưởi",
+    bus_companies_id: "comp_02",
+    company_name: "Thành Bưởi",
     image: "https://example.com/thanhbuoi_logo.png",
     descriptions: "Chuyên tuyến Sài Gòn - Đà Lạt - Cần Thơ.",
     phone: "19006079",
@@ -111,24 +111,54 @@ export const routes: Routes[] = [
 
 export const seats: Seat[] = [
   {
-    id: "seat_01",
-    bus_id: "bus_01",
+    id: "s1",
+    bus_id: "b1",
     seat_number: "A01",
     seat_type: "VIP",
-    status: "booked",
-    price: 300000,
-    created_at: new Date("2023-05-01T00:00:00Z"),
-    updated_at: new Date("2023-11-20T10:00:00Z"),
-  },
-  {
-    id: "seat_02",
-    bus_id: "bus_02",
-    seat_number: "B05",
-    seat_type: "LUXURY",
     status: "active",
     price: 450000,
-    created_at: new Date("2023-06-15T00:00:00Z"),
-    updated_at: new Date("2023-06-15T00:00:00Z"),
+    created_at: new Date("2023-01-10T00:00:00Z"),
+    updated_at: new Date("2023-01-10T00:00:00Z"),
+  },
+  {
+    id: "s2",
+    bus_id: "b1",
+    seat_number: "A02",
+    seat_type: "VIP",
+    status: "booked",
+    price: 450000,
+    created_at: new Date("2023-01-10T00:00:00Z"),
+    updated_at: new Date("2023-01-10T00:00:00Z"),
+  },
+  {
+    id: "s3",
+    bus_id: "b1",
+    seat_number: "A03",
+    seat_type: "STANDARD",
+    status: "active",
+    price: 350000,
+    created_at: new Date("2023-01-10T00:00:00Z"),
+    updated_at: new Date("2023-01-10T00:00:00Z"),
+  },
+  {
+    id: "s4",
+    bus_id: "b2",
+    seat_number: "B01",
+    seat_type: "STANDARD",
+    status: "booked",
+    price: 300000,
+    created_at: new Date("2023-01-10T00:00:00Z"),
+    updated_at: new Date("2023-01-10T00:00:00Z"),
+  },
+  {
+    id: "s5",
+    bus_id: "b2",
+    seat_number: "B02",
+    seat_type: "STANDARD",
+    status: "active",
+    price: 300000,
+    created_at: new Date("2023-01-10T00:00:00Z"),
+    updated_at: new Date("2023-01-10T00:00:00Z"),
   },
 ];
 

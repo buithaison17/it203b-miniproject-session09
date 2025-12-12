@@ -1,15 +1,17 @@
 import { useState } from "react";
-import type { Seat } from "../../interfaces/Bus";
 import SeatItem from "./Seat";
+import type { Seat } from "../../interfaces/Bus";
 
 interface Props {
-  seats: any;
+  seats: Seat[];
   selectSeat: (quantity: number) => void;
 }
 
 export default function SeatMap({ seats, selectSeat }: Props) {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const handleSeatClick = (seat: Seat) => {
+    console.log(seat);
+
     setSelectedSeats((prev) => {
       let newSeats;
 

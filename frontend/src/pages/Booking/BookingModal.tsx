@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import SeatMap from "./SeatMap";
+import type { Seat } from "../../interfaces/Bus";
 
 interface Props {
   bookingModal: () => void;
+  seats: Seat[];
 }
 
-export default function BookingModal({ bookingModal }: Props) {
+export default function BookingModal({ bookingModal, seats }: Props) {
   // Chặn cuộn trang khi mở modal
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -14,18 +16,6 @@ export default function BookingModal({ bookingModal }: Props) {
       document.body.style.overflow = "auto";
     };
   }, []);
-
-  // mock data
-  const seats = [
-    { id: "A1", number: 1, status: "available" },
-    { id: "A2", number: 2, status: "booked" },
-    { id: "A3", number: 3, status: "available" },
-    { id: "A4", number: 4, status: "available" },
-    { id: "A5", number: 5, status: "booked" },
-    { id: "A6", number: 6, status: "available" },
-    { id: "A7", number: 7, status: "available" },
-    { id: "A8", number: 8, status: "available" },
-  ];
 
   // sơ đồ ghế
   const [seatCount, setSeatCount] = useState<number>(0);
