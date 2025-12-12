@@ -16,7 +16,6 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-import { useAppSelector, useAppDispatch } from "../../../stores/store";
 import {
   fetchStationsThunk,
   addStationThunk,
@@ -30,6 +29,7 @@ import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
+import { useAppDispatch, useAppSelector } from "../../../hooks/CustomHook";
 
 const { Column } = Table;
 
@@ -52,7 +52,7 @@ const formatDateTime = (dateString: string): string => {
 export default function StationManager() {
   const dispatch = useAppDispatch();
   const { stations, loading, error } = useAppSelector(
-    (state) => state.stations
+    (state) => state.station.stations
   );
 
   const [isModalVisible, setIsModalVisible] = useState(false);

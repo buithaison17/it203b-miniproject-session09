@@ -1,10 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Grechen+Fuemen&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-* {
-
-  box-sizing: border-box;
-}
-
 body {
   width: 100%;
   font-family: "Roboto", sans-serif;
@@ -22,12 +17,12 @@ body {
 
 
 .content-container {
-  padding: 140px 170px 140px 170px;
+  padding: 100px 170px 140px 170px;
 }
 
 @media screen and (min-width: 1280px) {
   .content-container {
-    padding: 140px 170px 80px 170px;
+    padding: 100px 170px 80px 170px;
   }
 }
 

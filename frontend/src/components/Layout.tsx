@@ -9,7 +9,7 @@ const Layout = (): React.ReactElement => {
       <Header />
 
 
-      <main className="content-container">
+      <main className="flex-1">
         <Outlet />
       </main>
 

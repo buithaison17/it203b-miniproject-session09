@@ -30,7 +30,7 @@ export const deleteStationThunk = createAsyncThunk(
     'stations/deleteStation', async (id: string) => await deleteStationApi(id)
 );
 
-const stationSlice = createSlice({
+const StationSlice = createSlice({
     name: 'stations',
     initialState,
     reducers: {},
@@ -63,9 +63,9 @@ const stationSlice = createSlice({
             // Xử lý lỗi chung
             .addMatcher((action) => action.type.endsWith('/rejected'), (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Có lỗi xảy ra.';
+                state.error = action.type || 'Có lỗi xảy ra.';
             });
     }
 });
 
-export default stationSlice.reducer;
+export default StationSlice.reducer;
