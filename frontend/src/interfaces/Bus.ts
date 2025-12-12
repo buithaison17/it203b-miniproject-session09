@@ -1,15 +1,16 @@
 export interface BusCompany {
-  bus_companies_id: string;
-  company_name: string;
-  image: string;
+  id: string;
+  name: string;
+  image: string | null;
   descriptions: string;
   phone: string;
-  license: string;
-  created_at: Date;
-  updated_at: Date;
+  license: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Bus {
+  name: string;
   id: string;
   company_id: string;
   bus_name: string;

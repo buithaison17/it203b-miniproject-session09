@@ -3,7 +3,7 @@ import Location from "../../../assets/icons/location.png";
 import benxe from "../../../assets/imgs/ben-xe1.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../stores/store";
-import { fetchStationsThunk } from "../../../stores/stationSlice";
+import { fetchStationsThunk } from "../../../apis/station.api";
 export default function Station() {
   const dispatch = useDispatch<AppDispatch>();
   const { stations, loading } = useSelector((s: RootState) => s.station);
@@ -15,30 +15,29 @@ export default function Station() {
   }, [dispatch, loading, stations.length]);
 
   return (
-      <div className=" pr-[170px] pl-[170px]" >
+    <div className=" pr-[170px] pl-[170px]">
       {/* TITLE */}
       <div className="flex pb-6 justify-center items-center gap-2 ">
         <div className="w-[3px] h-[40px] bg-yellow-500"></div>
         <h2 className="pt-4 pb-4 text-4xl font-bold tracking-wide">BẾN XE</h2>
       </div>
 
-
       {/* GRID CARDS */}
       <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
         {stations.map((st) => (
           <div
             key={st.id}
-            className="w-[260px] h-[300px] bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer flex flex-col ">
+            className="w-[260px] h-[300px] bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer flex flex-col "
+          >
             <div className="relative">
               <img
-                src={(benxe as unknown as string)}
+                src={benxe as unknown as string}
                 alt={st.name}
                 className="w-full h-[160px] object-cover rounded-xl"
               />
             </div>
 
             {/* TAG + BRAND */}
-            
 
             {/* NAME + ROUTE */}
             <div className="p-4">
@@ -49,18 +48,16 @@ export default function Station() {
                 <div className="w-[20px] h-[13px]">
                   <img src={Location} alt="" />
                 </div>
-                <div>                
-                  <p className="text-xs text-black line-clamp-2 flex-1">{st.location}</p>
-                  </div>
-            
-
+                <div>
+                  <p className="text-xs text-black line-clamp-2 flex-1">
+                    {st.location}
+                  </p>
+                </div>
               </div>
             </div>
-
           </div>
         ))}
       </div>
-
 
       {/* PAGINATION */}
       <div className="flex justify-center gap-2 mt-10 mb-6">
@@ -82,11 +79,11 @@ export default function Station() {
         ))}
       </div>
 
-
       {/* FOOTER */}
       <p className="text-sm text-gray-600 ">
-        Bến xe – Vivutoday.com | Hệ thống đặt vé xe online cao cấp, dễ dàng tra cứu giá vé,
-        lịch trình, số điện thoại, tuyến đường của 1000+ hãng xe chất lượng tốt nhất.
+        Bến xe – Vivutoday.com | Hệ thống đặt vé xe online cao cấp, dễ dàng tra
+        cứu giá vé, lịch trình, số điện thoại, tuyến đường của 1000+ hãng xe
+        chất lượng tốt nhất.
       </p>
     </div>
   );
