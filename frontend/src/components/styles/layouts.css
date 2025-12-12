@@ -1,11 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Grechen+Fuemen&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   width: 100%;
   font-family: "Roboto", sans-serif;
@@ -161,8 +155,6 @@ nav .menu-bar {
   width: 27px;
   height: 27px;
 }
-
-
 
 /* footer */
 footer {
