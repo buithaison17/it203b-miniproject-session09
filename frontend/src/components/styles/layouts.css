@@ -1,11 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Grechen+Fuemen&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   width: 100%;
   font-family: "Roboto", sans-serif;
@@ -15,6 +9,21 @@ body {
 .heading-nav {
   width: 100%;
   height: fit-content;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  position: fixed;
+}
+
+
+.content-container {
+  padding: 100px 170px 140px 170px;
+}
+
+@media screen and (min-width: 1280px) {
+  .content-container {
+    padding: 100px 170px 80px 170px;
+  }
 }
 
 header {
@@ -85,7 +94,7 @@ nav {
 }
 
 /* Logo */
-nav img {
+nav > img {
   width: 110px;
   height: auto;
 }
@@ -98,8 +107,9 @@ nav .menu {
   height: 100%;
 }
 
+
 nav .menu .item {
-  padding: 15px 12px;
+  padding: 12px 12px;
   border-radius: 7px;
   color: #1190d4;
   font-weight: 700;
@@ -154,6 +164,51 @@ nav .menu .search img {
 nav .menu .search:hover {
   background: #ffb733;
 }
+
+.avatar-box {
+  position: relative;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.avatar-menu {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 180px;
+  padding: 6px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.avatar-menu .menu-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-menu .menu-item:hover {
+  background: #f5f5f5;
+}
+
+.avatar-menu .logout {
+  color: red;
+  font-weight: 600;
+}
+
+
 
 /* Menu bar mobile (ẩn mặc định) */
 nav .menu-bar {
