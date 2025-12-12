@@ -7,6 +7,7 @@ import { featBusCompany } from "../../apis/bus_companies.api";
 import { featSchedule } from "../../apis/schedule.api";
 import { featRoutes } from "../../apis/routes.api";
 
+
 type Status = "upcoming" | "completed" | "canceled";
 
 type Booking = {
@@ -103,7 +104,7 @@ export default function BookingHistoryScreen() {
       : "bg-red-100 text-red-700";
 
   return (
-    <div className="pt-[140px] pr-[170px] pl-[170px] min-h-screen bg-gray-50">
+    <div className=" pr-[170px] pl-[170px] min-h-screen bg-gray-50">
       <div className="flex justify-center items-center gap-2 mb-6">
         <div className="w-[3px] h-[40px] bg-yellow-500" />
         <h2 className="pt-2 pb-2 text-3xl sm:text-4xl font-bold tracking-wide">

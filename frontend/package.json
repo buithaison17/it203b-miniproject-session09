@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.6",
+    "@mui/styled-engine-sc": "^7.3.6",
     "@reduxjs/toolkit": "^2.11.1",
     "@tailwindcss/vite": "^4.1.18",
     "antd": "^6.1.0",
@@ -21,6 +25,7 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.10.1",
+    "styled-components": "^6.1.19",
     "sweetalert2": "^11.26.4",
     "tailwindcss": "^4.1.18",
     "xlsx": "^0.18.5"

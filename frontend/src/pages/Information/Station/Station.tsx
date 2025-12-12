@@ -15,7 +15,7 @@ export default function Station() {
   }, [dispatch, loading, stations.length]);
 
   return (
-      <div className="pt-[140px] pr-[170px] pl-[170px]" >
+      <div className=" pr-[170px] pl-[170px]" >
       {/* TITLE */}
       <div className="flex pb-6 justify-center items-center gap-2 ">
         <div className="w-[3px] h-[40px] bg-yellow-500"></div>
