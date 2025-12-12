@@ -1,0 +1,611 @@
+@import url("https://fonts.googleapis.com/css2?family=Grechen+Fuemen&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+body {
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+}
+
+/* ===== HEADER TOP ===== */
+.heading-nav {
+  width: 100%;
+  height: fit-content;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  position: fixed;
+}
+
+
+.content-container {
+  padding: 100px 170px 140px 170px;
+}
+
+@media screen and (min-width: 1280px) {
+  .content-container {
+    padding: 100px 170px 80px 170px;
+  }
+}
+
+header {
+  width: 100%;
+  height: 34px;
+  background-color: #1295db;
+  padding: 0 160px;
+  display: flex;
+  align-items: center;
+}
+
+header .heading {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .heading .heading-left,
+header .heading .heading-right .item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+header .heading img {
+  width: 15px;
+  height: 15px;
+}
+
+header .heading span {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* line */
+header .heading .heading-right {
+  display: flex;
+  gap: 14px;
+}
+
+header .heading .heading-right .line-vertical {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* hover */
+header span:hover,
+header img:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+/* ===== NAV BAR ===== */
+nav {
+  width: 100%;
+  height: 65px;
+  background: #fff;
+  padding: 0 160px;
+  box-shadow: 0 2px 18px rgba(120, 120, 120, 0.25);
+
+  display: flex;
+  align-items: center;
+  gap: 70px;
+}
+
+/* Logo */
+nav > img {
+  width: 110px;
+  height: auto;
+}
+
+/* Menu */
+nav .menu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+
+nav .menu .item {
+  padding: 12px 12px;
+  border-radius: 7px;
+  color: #1190d4;
+  font-weight: 700;
+}
+
+nav .menu .item a {
+  text-decoration: none;
+  color: #1190d4;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 65px;
+  display: inline-block;
+  letter-spacing: 0.2px;
+  padding: 0;
+}
+
+/* Hover: apply blue background + white text only to items that are NOT active */
+nav .menu .item:not(.link-active):hover {
+  background: #1190d4;
+  color: #fff;
+}
+
+nav .menu .item:not(.link-active):hover span {
+  color: #fff;
+}
+
+/* Active item */
+.link-active {
+  background: #1190d4;
+  color: #fff;
+}
+
+.link-active span {
+  color: #fff;
+}
+
+/* Search Icon */
+nav .menu .search {
+  background: #ffa901;
+  border-radius: 6px;
+  padding: 6px 9px;
+  display: flex;
+  align-items: center;
+}
+
+nav .menu .search img {
+  width: 17px;
+  height: 17px;
+}
+
+nav .menu .search:hover {
+  background: #ffb733;
+}
+
+.avatar-box {
+  position: relative;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+.avatar-menu {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 180px;
+  padding: 6px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.avatar-menu .menu-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-menu .menu-item:hover {
+  background: #f5f5f5;
+}
+
+.avatar-menu .logout {
+  color: red;
+  font-weight: 600;
+}
+
+
+
+/* Menu bar mobile (ẩn mặc định) */
+nav .menu-bar {
+  display: none;
+  width: 27px;
+  height: 27px;
+}
+
+
+
+/* footer */
+footer {
+  background: #fff7f5;
+  padding: 48px 170px 0px 170px;
+}
+
+footer .info-coach {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+footer .contact,
+footer .info-coach .info-1,
+footer .info-coach .info-2 {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+footer .info-coach .info-1 .news {
+  flex: 2;
+  height: fit-content;
+}
+
+footer .info-coach .info-1 .roads,
+footer .info-coach .info-1 .limousine {
+  flex: 1;
+}
+
+footer .info-coach .info-1 .news,
+footer .info-coach .info-1 .roads,
+footer .info-coach .info-1 .limousine {
+  height: 359.5px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 30px 16px;
+  gap: 12px;
+}
+
+footer .contact .about-us,
+footer .info-coach .info-2 .bus-station {
+  width: calc(100% / 4);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 30px 16px;
+  gap: 12px;
+}
+
+footer .info-coach .info-2 .list-title-coach {
+  height: fit-content;
+  display: flex;
+  flex: 1;
+}
+
+.list-title-coach .coach {
+  width: calc(100% / 3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 30px 16px;
+}
+
+footer h4 {
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+footer .info-coach .info-1 .news p,
+footer .info-coach .info-1 .roads p,
+footer .info-coach .info-1 .limousine p,
+footer .info-coach .info-2 .bus-station p,
+footer .info-coach .info-2 .coach p,
+footer .contact .about-us p {
+  color: #000;
+  font-size: 14.766px;
+  font-weight: 300;
+}
+
+footer .info-coach .info-1 .news a,
+footer .info-coach .info-1 .roads a,
+footer .info-coach .info-1 .limousine a,
+footer .info-coach .info-2 .bus-station a,
+.list-title-coach .coach a,
+footer .contact .about-us a {
+  text-decoration: none;
+  color: #767676;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.about-us .item-phone .p-1 {
+  color: #000;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.about-us .img1 {
+  height: 55.06px;
+  max-width: 98px;
+  object-fit: cover;
+}
+.about-us .img2 {
+  height: 44.53px;
+  max-width: 98px;
+  object-fit: cover;
+}
+.about-us .img3 {
+  height: 37.06px;
+  max-width: 98px;
+  object-fit: cover;
+}
+
+.about-us .item-phone .p-2 {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 11.3px;
+  font-weight: 400;
+}
+
+@media screen and (min-width: 991px) and (max-width: 1279px) {
+  header,
+  nav {
+    padding: 0 70px;
+  }
+
+  nav {
+    gap: 10px;
+  }
+
+  main {
+    padding: 0 11.8% 80px 11.8%;
+  }
+
+  /*  */
+  footer {
+    padding: 48px 100px 0px 100px;
+  }
+
+  footer .info-coach {
+    flex-direction: row;
+  }
+
+  footer .info-coach .info-1,
+  footer .info-coach .info-2 {
+    flex-direction: column;
+  }
+
+  footer .contact .about-us {
+    width: calc(100% / 2);
+  }
+
+  footer .info-coach .info-1 .news,
+  footer .info-coach .info-1 .roads,
+  footer .info-coach .info-1 .limousine {
+    height: fit-content;
+    flex: initial;
+  }
+
+  footer .info-coach .info-2 .bus-station {
+    width: 100%;
+  }
+
+  footer .info-coach .info-2 .list-title-coach {
+    flex-direction: column;
+    width: 100%;
+  }
+  .list-title-coach .coach {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 869px) and (max-width: 990px) {
+  header,
+  nav {
+    padding: 0 10px;
+  }
+
+  nav {
+    gap: 10px;
+  }
+
+  main .list-coach .item {
+    width: calc((100% - 40px) / 3);
+  }
+
+  main {
+    padding: 0 100px 80px 100px;
+  }
+
+  /*  */
+  footer {
+    padding: 48px 40px 0px 40px;
+  }
+  footer .info-coach {
+    flex-direction: row;
+  }
+
+  footer .info-coach .info-1,
+  footer .info-coach .info-2 {
+    flex-direction: column;
+  }
+
+  footer .contact .about-us {
+    width: calc(100% / 2);
+  }
+
+  footer .info-coach .info-1 .news,
+  footer .info-coach .info-1 .roads,
+  footer .info-coach .info-1 .limousine {
+    height: fit-content;
+    flex: initial;
+  }
+
+  footer .info-coach .info-2 .bus-station {
+    width: 100%;
+  }
+
+  footer .info-coach .info-2 .list-title-coach {
+    flex-direction: column;
+    width: 100%;
+  }
+  .list-title-coach .coach {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 401px) and (max-width: 868px) {
+  header .heading .heading-right {
+    display: none;
+  }
+
+  header .heading {
+    justify-content: center;
+  }
+
+  header {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  nav {
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  nav .menu-bar {
+    display: block;
+    width: 27px;
+    height: 27px;
+  }
+
+  nav .menu {
+    display: none;
+  }
+
+  main .list-coach .item {
+    width: calc((100% - 20px) / 2);
+  }
+
+  main {
+    padding: 0 16px 80px 16px;
+  }
+
+  /*  */
+  footer {
+    padding: 48px 16px 0px 16px;
+  }
+  footer .info-coach {
+    flex-direction: row;
+  }
+
+  footer .info-coach .info-1,
+  footer .info-coach .info-2 {
+    flex-direction: column;
+  }
+
+  footer .contact .about-us {
+    width: calc(100% / 2);
+  }
+
+  footer .info-coach .info-1 .news,
+  footer .info-coach .info-1 .roads,
+  footer .info-coach .info-1 .limousine {
+    height: fit-content;
+    flex: initial;
+  }
+
+  footer .info-coach .info-2 .bus-station {
+    width: 100%;
+  }
+
+  footer .info-coach .info-2 .list-title-coach {
+    flex-direction: column;
+    width: 100%;
+  }
+  .list-title-coach .coach {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  header .heading .heading-right {
+    display: none;
+  }
+
+  header {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  header .heading {
+    justify-content: center;
+  }
+
+  nav {
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  nav .menu-bar {
+    display: block;
+    width: 27px;
+    height: 27px;
+  }
+
+  nav .menu {
+    display: none;
+  }
+
+  main .list-coach .item {
+    width: 100%;
+  }
+
+  main {
+    padding: 0 16px 80px 16px;
+  }
+
+  /*  */
+  footer {
+    padding: 48px 16px 0px 16px;
+  }
+
+  footer .info-coach .info-1,
+  footer .info-coach {
+    flex-direction: column;
+  }
+
+  footer .info-coach .info-2 {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    gap: 20px;
+  }
+
+  footer .contact .about-us {
+    width: calc(100% / 2);
+  }
+
+  footer .info-coach .info-1 .news,
+  footer .info-coach .info-1 .roads,
+  footer .info-coach .info-1 .limousine {
+    height: fit-content;
+    flex: initial;
+  }
+
+  footer .info-coach .info-2 .bus-station {
+    width: 45%;
+    height: fit-content;
+  }
+
+  footer .info-coach .info-2 .list-title-coach {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .list-title-coach .coach {
+    width: 100%;
+  }
+}

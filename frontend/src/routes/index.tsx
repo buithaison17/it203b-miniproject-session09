@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminManager from "../admin/components/AdminManager";
 import OderManager from "../admin/pages/OrderManagement/index";
 import AdminReport from "../admin/pages/AdminReport/index";
-import StationManagers from "../admin/pages/StationManagement/index";
+import StationManagers from "../pages/Information/Station/Station";
 import BusManagementScreen from "../admin/pages/BusManagement";
 import BannerManagementScreen from "../admin/pages/BannerManagement";
 import AccountManagementScreen from "../admin/pages/AccountManagement";
@@ -22,6 +22,7 @@ import IntroductionScreen from "../pages/Introduction";
 import CheckticketScreen from "../pages/CheckTicket";
 import PostScreen from "../pages/Post";
 import Station from "../pages/Information/Station/Station";
+import BookingHistoryScreen from "../pages/BookingHistory/BookingHistory";
 
 export const routers = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const routers = createBrowserRouter([
       {
         path: "post:id",
         element: <PostScreen />,
+      },
+      {
+        path: "booking-history",
+        element: <BookingHistoryScreen />,
       },
     ],
   },
