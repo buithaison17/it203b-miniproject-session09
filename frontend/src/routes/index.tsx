@@ -22,7 +22,7 @@ import IntroductionScreen from "../pages/Introduction";
 import CheckticketScreen from "../pages/CheckTicket";
 import PostScreen from "../pages/Post";
 import Station from "../pages/Information/Station/Station";
-
+import BookingHistoryScreen from "../pages/BookingHistory";
 
 export const routers = createBrowserRouter([
   {
@@ -69,6 +69,10 @@ export const routers = createBrowserRouter([
       {
         path: "post:id",
         element: <PostScreen />,
+      },
+      {
+        path: "history-booking:id",
+        element: <BookingHistoryScreen />,
       },
     ],
   },
@@ -140,7 +144,7 @@ export const routers = createBrowserRouter([
       {
         path: "station",
         element: <StationManagers />,
-      }
+      },
     ],
   },
 ]);
