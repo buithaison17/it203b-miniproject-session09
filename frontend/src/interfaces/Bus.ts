@@ -8,8 +8,9 @@ export interface BusCompany {
   created_at: string;
   updated_at: string;
 }
-
+ 
 export interface Bus {
+  name: string;
   id: string;
   company_id: string;
   bus_name: string;
@@ -19,7 +20,7 @@ export interface Bus {
   created_at: Date;
   updated_at: Date;
 }
-
+ 
 export interface BusImage {
   id: string;
   image_url: string;

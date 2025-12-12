@@ -23,9 +23,8 @@ import {
   updateStationThunk,
   deleteStationThunk,
 } from "../../../apis/station.api";
-import type { Station } from "../../../interfaces/Station"; // Tái sử dụng
-import StationModal from "../../components/Modals/Stations/StationModal"; // Component Modal đã hoàn thiện
-
+import type { Station } from "../../../interfaces/Station";
+import StationModal from "../../components/Modals/Stations/StationModal";
 import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
@@ -53,7 +52,7 @@ export default function StationManager() {
   const dispatch = useAppDispatch();
   const { stations, loading, error } = useAppSelector(
     (state) => state.stations
-  ); 
+  );
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStation, setEditingStation] = useState<Station | null>(null);
@@ -81,25 +80,25 @@ export default function StationManager() {
 
     // Sắp xếp
     if (sortType === "updated_desc") {
-    result.sort(
+      result.sort(
         (a, b) =>
-            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-    );
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
     } else if (sortType === "date_desc") {
       result.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
-    } else if (sortType === "id_desc") { 
-        // Sắp xếp theo ID giảm dần 
-        result.sort((a, b) => {
-            // Lấy phần số của ID
-            const numA = parseInt(a.id.replace('BX', ''));
-            const numB = parseInt(b.id.replace('BX', ''));
+    } else if (sortType === "id_desc") {
+      // Sắp xếp theo ID giảm dần
+      result.sort((a, b) => {
+        // Lấy phần số của ID
+        const numA = parseInt(a.id.replace("BX", ""));
+        const numB = parseInt(b.id.replace("BX", ""));
 
-            // Sắp xếp giảm dần: b - a
-            return numB - numA;
-        });
+        // Sắp xếp giảm dần: b - a
+        return numB - numA;
+      });
     }
 
     return result;
@@ -122,43 +121,47 @@ export default function StationManager() {
 
   // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
   const handleAdd = () => {
-        const now = new Date().toISOString();
-        const newId = generateNewStationId(); 
-        
-        // Gán dữ liệu cơ sở cho Modal
-        setEditingStation({ 
-            id: newId, 
-            name: '', location: '', descriptions: '', phone: '',
-            image: null, wallpaper: null,
-            created_at: now, 
-            updated_at: now,
-        } as any); 
-        
-        setIsEditingMode(false); 
-        setIsModalVisible(true);
-    };
+    const now = new Date().toISOString();
+    const newId = generateNewStationId();
 
-    const handleEdit = (station: Station) => {
-        setEditingStation(station); 
-        setIsEditingMode(true); 
-        setIsModalVisible(true);
-    };
+    // Gán dữ liệu cơ sở cho Modal
+    setEditingStation({
+      id: newId,
+      name: "",
+      location: "",
+      descriptions: "",
+      phone: "",
+      image: null,
+      wallpaper: null,
+      created_at: now,
+      updated_at: now,
+    } as any);
 
-    const handleSave = (stationData: Station) => {
-        // Dùng state isEditingMode để quyết định API nào cần gọi
-        if (isEditingMode) { 
-            // Gọi UPDATE (PUT)
-            dispatch(updateStationThunk(stationData));
-            message.success("Đang cập nhật bến xe...");
-        } else {
-            // Gọi ADD (POST)
-            dispatch(addStationThunk(stationData));
-            message.success("Đang thêm bến xe...");
-        }
-        
-        setIsModalVisible(false);
-        setEditingStation(null);
-    };
+    setIsEditingMode(false);
+    setIsModalVisible(true);
+  };
+
+  const handleEdit = (station: Station) => {
+    setEditingStation(station);
+    setIsEditingMode(true);
+    setIsModalVisible(true);
+  };
+
+  const handleSave = (stationData: Station) => {
+    // Dùng state isEditingMode để quyết định API nào cần gọi
+    if (isEditingMode) {
+      // Gọi UPDATE (PUT)
+      dispatch(updateStationThunk(stationData));
+      message.success("Đang cập nhật bến xe...");
+    } else {
+      // Gọi ADD (POST)
+      dispatch(addStationThunk(stationData));
+      message.success("Đang thêm bến xe...");
+    }
+
+    setIsModalVisible(false);
+    setEditingStation(null);
+  };
 
   const handleDelete = (id: string) => {
     dispatch(deleteStationThunk(id));
@@ -171,20 +174,20 @@ export default function StationManager() {
       message.warning("Không có dữ liệu để xuất file.");
       return;
     }
-    
-    // Chuẩn bị dữ liệu để xuất file 
-    const exportData = filteredAndSortedStations.map(s => ({
-        ID: s.id,
-        'Tên Bến Xe': s.name,
-        'Địa Chỉ': s.location,
-        'Mô Tả': s.descriptions,
-        'Số ĐT': s.phone,
-        'Ngày Tạo': formatDateTime(s.created_at),
-        'Ngày Cập Nhật': formatDateTime(s.updated_at),
+
+    // Chuẩn bị dữ liệu để xuất file
+    const exportData = filteredAndSortedStations.map((s) => ({
+      ID: s.id,
+      "Tên Bến Xe": s.name,
+      "Địa Chỉ": s.location,
+      "Mô Tả": s.descriptions,
+      "Số ĐT": s.phone,
+      "Ngày Tạo": formatDateTime(s.created_at),
+      "Ngày Cập Nhật": formatDateTime(s.updated_at),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
-    
+
     worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 25 }));
 
     const workbook = XLSX.utils.book_new();
@@ -237,7 +240,7 @@ export default function StationManager() {
             Thêm Bến Xe
           </Button>
 
-          {/* BÊN PHẢI: XUẤT, LỌC, TÌM KIẾM */}
+          {/* BÊN PHẢI: XUẤT, TÌM KIẾM */}
           <div className="flex gap-4">
             {/* Xuất file */}
             <div
@@ -274,7 +277,7 @@ export default function StationManager() {
 
       {/* --- BẢNG BẾN XE --- */}
       <Table<Station>
-        loading={loading} 
+        loading={loading}
         pagination={{ pageSize: 5 }}
         dataSource={filteredAndSortedStations}
         rowKey="id"
@@ -285,18 +288,18 @@ export default function StationManager() {
         <Column title="Địa chỉ" dataIndex="location" key="location" />
         <Column title="Số ĐT" dataIndex="phone" key="phone" width={100} />
         <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
-        <Column 
-            title="Ngày Tạo" 
-            dataIndex="created_at" 
-            key="created_at"
-            render={(dateString: string) => formatDateTime(dateString)}
+        <Column
+          title="Ngày Tạo"
+          dataIndex="created_at"
+          key="created_at"
+          render={(dateString: string) => formatDateTime(dateString)}
         />
-        <Column 
-    title="Ngày Cập Nhật" 
-    dataIndex="updated_at" 
-    key="updated_at"
-    render={(dateString: string) => formatDateTime(dateString)}
-  />
+        <Column
+          title="Ngày Cập Nhật"
+          dataIndex="updated_at"
+          key="updated_at"
+          render={(dateString: string) => formatDateTime(dateString)}
+        />
         <Column
           title="Action"
           key="action"
@@ -307,7 +310,7 @@ export default function StationManager() {
                 <Button
                   icon={<EditOutlined />}
                   type="link"
-                  onClick={() => handleEdit(record)} 
+                  onClick={() => handleEdit(record)}
                 />
               </Tooltip>
               <Popconfirm

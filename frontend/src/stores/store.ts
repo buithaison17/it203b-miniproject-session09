@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import bookingSlice from "../apis/booking.api";
 import StationSlice from "../apis/station.api";
 import BusCompanySlice from "../apis/busCompany.api"
+import BusSlice from "../apis/bus.api"
 import {
   useDispatch,
   useSelector,
@@ -12,6 +13,7 @@ export const store = configureStore({
     stations: StationSlice,
     tickets: bookingSlice,
     busCompany: BusCompanySlice,
+    buses: BusSlice,
   },
 });
 export default store;
