@@ -9,6 +9,7 @@ import PaymentProviderSlice from "../apis/provider.api";
 import StationSlice from "../apis/station.api";
 import BusCompanySlice from "../apis/busCompany.api";
 import BusSlice from "../apis/bus.api";
+import searchSlice from "./searchSlice";
 export const store = configureStore({
   reducer: {
     tickets: BookingSlice,
@@ -23,6 +24,7 @@ export const store = configureStore({
     paymentProvider: PaymentProviderSlice,
     stations: StationSlice,
     busCompany: BusCompanySlice,
+    searchSlice: searchSlice,
   },
 });
 export default store;

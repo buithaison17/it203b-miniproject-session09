@@ -33,7 +33,6 @@ const searchSlice = createSlice({
   reducers: {
     searchRoutes: (state, action) => {
       state.input = action.payload;
-      console.log("input : ", state.input);
     },
     setRoutesId: (state, action) => {
       const input = current(state.input);
@@ -47,13 +46,13 @@ const searchSlice = createSlice({
           element.arrival_station_name.trim().toLowerCase() ==
             input.arrival.trim().toLowerCase()
       );
-      console.log("find : ", find);
 
       if (find) {
         state.routesId = find.id;
       } else {
         state.routesId = undefined;
       }
+      console.log(state.routesId);
     },
     filterScheduleData: (state, action) => {
       state.schedulesFilter = [];
@@ -62,9 +61,9 @@ const searchSlice = createSlice({
       state.schedulesFilter = scheduleData.filter(
         (element) => element.route_id === routesId
       );
-      console.log("filter : ", state.schedulesFilter);
+      console.log("filter schedules : ", state.schedulesFilter);
 
-      console.log(state.schedulesFilter.length);
+      console.log("lenght : ", state.schedulesFilter.length);
     },
   },
 });

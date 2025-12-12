@@ -19,7 +19,7 @@ export default function BookingScreen() {
   const { routes, status: routesStatus } = useAppSelector(
     (state) => state.routes
   );
-  const { buses, status: busStatus } = useAppSelector((state) => state.buses);
+  const { buses } = useAppSelector((state) => state.buses);
   const { schedules, status: schedulesStatus } = useAppSelector(
     (state) => state.schedules
   );
@@ -48,11 +48,7 @@ export default function BookingScreen() {
   }, []);
 
   useEffect(() => {
-    if (
-      routesStatus === "fulfilled" &&
-      busStatus === "fulfilled" &&
-      schedulesStatus === "fulfilled"
-    ) {
+    if (routesStatus === "fulfilled" && schedulesStatus === "fulfilled") {
       setRoutesData(routes);
       setBusesData(buses);
       setScheduleData(schedules);
