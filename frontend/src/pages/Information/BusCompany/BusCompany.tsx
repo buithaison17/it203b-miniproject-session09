@@ -1,57 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Location from "../../../assets/icons/location.png";
 import benxe from "../../../assets/imgs/ben-xe1.png";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../../../stores/store";
+import { featBusCompany } from "../../../apis/bus_companies.api";
 export default function BusCompany() {
-  const busCompanies = [
-    {
-      id: 1,
-      name: "Nhà xe Thanh Nhung",
-      img: {benxe},
-      route: "Từ tự chọn - 4X6 Xóm Giếng, Q. Ngô Quyền, TP. Bắc Giang",
-    },
-    {
-      id: 2,
-      name: "Nhà xe Xuân Quỳnh",
-      img: "/img/xuan-quynh.jpg",
-      route: "Từ tự chọn - Bãi Từ Xuân, P. Lê Thành Nghị, Hải Dương",
-    },
-    {
-      id: 3,
-      name: "Nhà xe Quang Giang ",
-      img: "/img/quang-giang.jpg",
-      route: "Từ tự chọn - 17 Thị trấn Phố, P. Nguyễn Trãi, TP. Hà Giang",
-    },
-    {
-      id: 4,
-      name: "Nhà xe Văn Năm",
-      img: "/img/van-nam.jpg",
-      route: "Từ tự chọn - K. Phương Vĩ H., Cẩm Lệ",
-    },
-    {
-      id: 5,
-      name: "Nhà xe Chí Tâm",
-      img: "/img/chi-tam.jpg",
-      route: "Từ tự chọn - Tân Lập 4, K. Phong Dảng, K. Krông, Đắk Lắk",
-    },
-    {
-      id: 6,
-      name: "Nhà xe Hồng Thịnh",
-      img: "/img/hong-thinh.jpg",
-      route: "Từ tự chọn - Q. Đạm Phán, Tổ 1, P. Hưng Thanh, TP. Hà Tĩnh",
-    },
-    {
-      id: 7,
-      name: "Nhà xe Bình Hà",
-      img: "/img/binh-ha.jpg",
-      route: "Từ tự chọn - Quốc Lộ 2B 1, K. Bình Minh, Lạng Sơn",
-    },
-    {
-      id: 8,
-      name: "Nhà xe Khang Phát",
-      img: "/img/khang-phat.jpg",
-      route: "Từ tự chọn - 212 Nguyễn Tất Thành, Q. Thanh Khê, TP. Đà Nẵng",
-    },
-  ];
+  const dispatch = useDispatch<AppDispatch>();
+  const { busCompany, status } = useSelector((s: RootState) => s.busCompanys);
+
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(featBusCompany());
+    }
+  }, [dispatch, status]);
 
   return (
       <div className="pt-[140px] pr-[170px] pl-[170px]" >
@@ -64,14 +25,14 @@ export default function BusCompany() {
 
       {/* GRID CARDS */}
       <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-        {busCompanies.map((bus) => (
+        {busCompany.map((bus) => (
           <div
-            key={bus.id}
+            key={bus.bus_companies_id}
             className="w-[260px] h-[300px] bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer flex flex-col ">
             <div className="relative">
               <img
-                src={benxe}
-                alt={bus.name}
+                src={bus.image || (benxe as unknown as string)}
+                alt={bus.company_name}
                 className="w-full h-[160px] object-cover rounded-xl"
               />
             </div>
@@ -82,14 +43,14 @@ export default function BusCompany() {
             {/* NAME + ROUTE */}
             <div className="p-4">
               <h3 className="font-semibold text-[15px] leading-tight ">
-                {bus.name}
+                {bus.company_name}
               </h3>
               <div className="flex items-start gap-1 mt-1">
                 <div className="w-[20px] h-[13px]">
                   <img src={Location} alt="" />
                 </div>
                 <div>                
-                  <p className="text-xs text-black line-clamp-2 flex-1">{bus.route}</p>
+                  <p className="text-xs text-black line-clamp-2 flex-1">{bus.descriptions}</p>
                   </div>
             
 

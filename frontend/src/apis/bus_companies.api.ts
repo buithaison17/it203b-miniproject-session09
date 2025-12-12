@@ -15,7 +15,7 @@ const initialState: CompanyState = {
 };
 
 export const featBusCompany = createAsyncThunk("busCompany/featBusCompany", async () => {
-  const res = await axios.get("http://localhost:8080/bus_companies");
+  const res = await axios.get("http://localhost:8080/bus_company");
   return res.data;
 });
 
