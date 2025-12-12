@@ -22,8 +22,6 @@ import IntroductionScreen from "../pages/Introduction";
 import CheckticketScreen from "../pages/CheckTicket";
 import PostScreen from "../pages/Post";
 import Station from "../pages/Information/Station/Station";
-import ReviewManagement from "../admin/pages/ReviewManagement";
-import DetailReport from "../admin/pages/AdminReport/DetailReport";
 
 export const routers = createBrowserRouter([
   {
@@ -88,10 +86,6 @@ export const routers = createBrowserRouter([
         element: <AdminReport />,
       },
       {
-        path: "/admin/report/detail/:company_id",
-        element: <DetailReport />,
-      },
-      {
         path: "station",
         element: <StationManagers />,
       },
@@ -126,10 +120,6 @@ export const routers = createBrowserRouter([
       {
         path: "trip",
         element: <TripManagementScreen />,
-      },
-      {
-        path: "review",
-        element: <ReviewManagement />,
       },
     ],
   },
