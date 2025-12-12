@@ -2,18 +2,18 @@ import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
-import { Input, Table } from "antd";
-
+import { Button, Input, Table } from "antd";
 import * as XLSX from "xlsx";
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import type { CancellationPolicies } from "../../../interfaces/Schedules";
+import type { Review } from "../../../interfaces/Schedules";
 import type { AppDispatch, RootState } from "../../../stores/store";
-import { featCancelTickets } from "../../../apis/cancelled_tickets.api";
 
-export default function CancellationManagement() {
+import { featReview } from "../../../apis/reviews.api";
+
+export default function ReviewManagement() {
   const { Column } = Table;
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState("all");
@@ -23,7 +23,7 @@ export default function CancellationManagement() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(featCancelTickets());
+    dispatch(featReview());
   }, [dispatch]);
 
   function formatISO(dateStr: string) {
@@ -46,44 +46,51 @@ export default function CancellationManagement() {
     return { diffHours, diffMinutes };
   }
 
-  const cancelTickets = useSelector(
-    (state: RootState) => state.cancelTickets.cancelTickets
-  );
+  const reviews = useSelector((state: RootState) => state.reviews.reviews);
 
-  const filteredData = cancelTickets
-    .filter((b) => {
-      
-      if (
-        searchText &&
-        !b.id.toLowerCase().includes(searchText.toLowerCase()) &&
-        !b.route_id.toLowerCase().includes(searchText.toLowerCase())
-      )
-        return false;
-      return true;
-    })
-  
+  // const filteredData = cancelTickets
+  //   .filter((b) => {
+  //     if (seatFilter && b.seat_type !== seatFilter) return false;
 
-  const ExportExcel = () => {
-    const sheetData = cancelTickets.map((item, index) => ({
-    STT: index + 1,
-    Mã_hủy_vé: item.id,
-    Tuyến_đường: item.route_id,
-    Giờ_khởi_hành: item.created_at,
-    Phần_trăm_hoàn :item.refund_percentage,
-    Ngày_tạo : item.created_at
-  }));
+  //     if (statusFilter && b.status !== statusFilter) return false;
 
-    const worksheet = XLSX.utils.json_to_sheet(sheetData);
+  //     if (
+  //       searchText &&
+  //       !b.id.toLowerCase().includes(searchText.toLowerCase()) &&
+  //       !b.schedule_id.toLowerCase().includes(searchText.toLowerCase())
+  //     )
+  //       return false;
+  //     return true;
+  //   })
+  //   .sort((a, b) => {
+  //     if (sortValue === "price") return a.price - b.price;
+  //     if (sortValue === "time")
+  //       return (
+  //         new Date(a.departure_time).getTime() -
+  //         new Date(b.departure_time).getTime()
+  //       );
+  //     return 0;
+  //   });
 
-    worksheet["!cols"] = Object.keys(sheetData[0]).map(() => ({ wch: 20 }));
+  // const ExportExcel = () => {
+  //   const sheetData = cancelTickets.map((item) => ({
+  //     ...item,
+  //     departure_time: item.departure_time.toLocaleString(),
+  //     arrival_time: item.arrival_time.toLocaleString(),
+  //     created_at: item.created_at.toLocaleString(),
+  //     updated_at: item.updated_at.toLocaleString(),
+  //   }));
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
+  //   const worksheet = XLSX.utils.json_to_sheet(sheetData);
 
-    XLSX.writeFile(workbook, "danh_sach_hủy_vé.xlsx");
-  };
-  console.log(cancelTickets);
-  
+  //   worksheet["!cols"] = Object.keys(sheetData[0]).map(() => ({ wch: 20 }));
+
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
+
+  //   XLSX.writeFile(workbook, "danh_sach_don_ve.xlsx");
+  // };
+  console.log(reviews);
 
   return (
     <div>
@@ -93,11 +100,11 @@ export default function CancellationManagement() {
 
           <img src={hide} className="rotate-90" alt="" />
 
-          <p className="font-both">Danh sách hủy vé</p>
+          <p className="font-both">Danh sách đánh giá...</p>
         </div>
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
-          <div className="text-4xl">Danh sách hủy vé </div>
+          <div className="text-4xl">Danh sách đánh giá </div>
           {/* Đăng xuất */}
           <div className="flex items-center gap-4 p-2 bg-white rounded-lg shadow-sm">
             {/* Avatar */}
@@ -130,47 +137,63 @@ export default function CancellationManagement() {
           />
           <div className="flex gap-4">
             <div
-              onClick={ExportExcel}
+              // onClick={ExportExcel}
               className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 h-10 justify-center"
             >
               <img className="w-4 h-4" src={excel} alt="" />
               <p>Xuất file</p>
             </div>
+
+            <select
+              value={sortValue}
+              onChange={(e) => setSortValue(e.target.value)}
+              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-35 justify-center"
+              name=""
+              id=""
+            >
+              <option value="all"> Sắp xếp tất cả</option>
+              <option value="price">Sắp xếp giá</option>
+              <option value="time">Sắp xếp thời gian</option>
+            </select>
+
+            <select
+              className="border rounded px-2 py-1"
+              value={seatFilter}
+              onChange={(e) => setSeatFilter(e.target.value)}
+            >
+              <option value="">Tất cả loại ghế</option>
+              <option value="LUXURY">LUXURY</option>
+              <option value="VIP">VIP</option>
+              <option value="STANDARD">STANDARD</option>
+            </select>
           </div>
         </div>
 
         {/* bảng dữ liệu */}
 
-        <Table<CancellationPolicies>
-          pagination={{ pageSize: 5 }}
-          dataSource={filteredData}
-        >
+        <Table<Review> pagination={{ pageSize: 5 }} dataSource={reviews}>
           <Column
             title="STT"
             key="index"
             render={(_, __, index) => index + 1}
           />
 
-          <Column
-            title="Mã hủy vé"
-            dataIndex="cancellation_policies_id"
-            key="cancellation_policies_id"
-          />
-          <Column title="Mô tả" dataIndex="descriptions" key="descriptions" />
-          <Column title="Mã tuyến đường" dataIndex="route_id" key="route_id" />
+          <Column title="Mã đánh giá" dataIndex="review_id " key="review_id " />
+          <Column title="Mã người dùng" dataIndex="user_id" key="user_id" />
+          <Column title="Mã xe" dataIndex="bus_id" key="bus_id" />
 
           <Column
-            title="Giờ trước khi khởi hành"
-            dataIndex="cancellation_time_limit"
-            key="cancellation_time_limit"
+            title="Số sao"
+            dataIndex="rating"
+            key="rating"
             render={(value) => formatISO(value)}
           />
 
           <Column
-            title="Phần trăm hoàn tiền"
-            dataIndex="refunc_percentage"
-            key="refunc_percentage"
-             render={(value) => `${value} %`}
+            title="Nội dung"
+            dataIndex="review"
+            key="review"
+            render={(value) => `${value} %`}
           />
 
           <Column

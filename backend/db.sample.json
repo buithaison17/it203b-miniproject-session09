@@ -1,0 +1,16 @@
+{
+  "users": [],
+  "roles": [
+    { "id": "role1", "name": "User" },
+    { "id": "role2", "name": "Admin" }
+  ],
+  "user_roles": [],
+  "stations": [],
+  "bus_company": [],
+  "buses": [],
+  "routes": [],
+  "seats": [],
+  "schedule": [],
+  "tickets": [],
+  "payment_provider": []
+}

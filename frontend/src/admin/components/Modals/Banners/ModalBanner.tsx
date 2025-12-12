@@ -1,17 +1,25 @@
-import { Form, Input, Modal, Select } from "antd";
-import type { Ticket } from "../../../../interfaces/Schedules";
-import { useEffect } from "react";
+import { Form, Input, Modal } from "antd";
+
+import { useEffect, useState } from "react";
 import { featBooking } from "../../../../apis/booking.api";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../stores/store";
+import type { Banner } from "../../../../interfaces/Banner";
 
-const { Option } = Select;
+import axios from "axios";
 
 interface ModalBookingProps {
+  modal: "add" | "edit";
   open: boolean;
-  onOk: (ticket: Ticket) => void;
+  onOk: (banner: Banner) => void;
   onCancel: () => void;
-  initial?: Partial<Ticket>;
+  initial?: Partial<Banner>;
+}
+
+interface BannerForm {
+  banner_id : string;
+  image : string | File;
+  position: string;
 }
 
 export default function ModalBanner({
@@ -19,17 +27,57 @@ export default function ModalBanner({
   onOk,
   onCancel,
   initial = {},
+    mode = "add"
 }: ModalBookingProps) {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<BannerForm>();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(featBooking());
   }, [dispatch]);
+  
+
+
+  const [preview, setPreview] = useState<string>("");
+  
+
+  async function uploadToCloudinary(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "vivutoday");
+    formData.append("cloud_name", "deyuvrsv9");
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/deyuvrsv9/image/upload",
+      formData
+    );
+
+    return res.data.secure_url;
+  }
+
+  async function handleSubmit(values: BannerForm) {
+    let imageUrl = "";
+
+    if (values.image instanceof File) {
+      imageUrl = await uploadToCloudinary(values.image);
+    }
+
+    const banner: Banner = {
+      id : initial.id,
+      banner_id: values.banner_id,
+      banner_url: imageUrl,
+      position: values.position,
+    };
+
+    onOk(banner);
+    form.resetFields();
+    setPreview("");
+  }
+
 
   return (
     <Modal
-      title="Cập nhật vé xe"
+      title="Thêm/Cập nhật vé"
       open={open}
       onOk={() => form.submit()}
       onCancel={onCancel}
@@ -37,68 +85,51 @@ export default function ModalBanner({
       <Form
         form={form}
         layout="vertical"
-        initialValues={initial}
-        onFinish={(values) =>
-          onOk({
-            ...(initial as Ticket), // giữ lại các field cũ
-            ...values,
-            updated_at: new Date(),
-          })
-        }
+        onFinish={handleSubmit}
       >
         <Form.Item
-          name="seat_id"
-          label="Mã Ghế"
-          rules={[{ required: true, message: "Vui lòng nhập ghế!" }]}
+          name="banner_id"
+          label="Mã banner"
+          
+          rules={[{ required: true, message: "Vui lòng nhập mã banner..!" }]}
         >
-          <Input placeholder="S01" />
+          <Input placeholder="BN001" />
         </Form.Item>
 
         <Form.Item
-          name="seat_type"
-          label="Loại Ghế"
-          rules={[{ required: true, message: "Vui lòng nhập loại ghế!" }]}
+          name="image"
+          label="Ảnh banner"
+          rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
         >
-          <Select placeholder="Chọn loại ghế">
-            <Option value="LUXURY">LUXURY</Option>
-            <Option value="VIP">VIP</Option>
-            <Option value="STANDARD">STANDARD</Option>
-          </Select>
+
+          <Input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                form.setFieldValue("image", file);
+                setPreview(URL.createObjectURL(file));
+              }
+            }}
+          />
+
+          {
+            preview && 
+            <div className="p-1">
+              <img className="w-20 h-20" src={preview} alt="" />
+            </div>
+          }
+        
         </Form.Item>
 
+       
         <Form.Item
-          name="departure_time"
-          label="Giờ đi"
-          rules={[{ required: true, message: "Vui lòng nhập giờ đi!" }]}
+          name="position"
+          label="Vị trí"
+          
+          rules={[{ required: true, message: "Vui lòng nhập vị trí..!" }]}
         >
-          <Input placeholder="2025-12-10 08:00" />
-        </Form.Item>
-
-        <Form.Item
-          name="arrival_time"
-          label="Giờ đến"
-          rules={[{ required: true, message: "Vui lòng nhập giờ đến!" }]}
-        >
-          <Input placeholder="2025-12-10 12:00" />
-        </Form.Item>
-
-        <Form.Item
-          name="price"
-          label="Giá vé"
-          rules={[{ required: true, message: "Vui lòng nhập giá!" }]}
-        >
-          <Input placeholder="350000" />
-        </Form.Item>
-
-        <Form.Item
-          name="status"
-          label="Trạng thái"
-          rules={[{ required: true, message: "Vui lòng chọn trạng thái!" }]}
-        >
-          <Select placeholder="Chọn trạng thái">
-            <Option value="booked">Booked</Option>
-            <Option value="cancelled">Cancelled</Option>
-          </Select>
+          <Input placeholder="dash board - content" />
         </Form.Item>
       </Form>
     </Modal>

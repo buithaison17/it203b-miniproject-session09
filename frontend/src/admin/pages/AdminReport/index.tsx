@@ -4,9 +4,7 @@ import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
 import { Button, Input, Space, Table } from "antd";
 import * as XLSX from "xlsx";
-import {
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 
 import { featRoutes } from "../../../apis/routes.api";
@@ -18,6 +16,7 @@ import { featReview } from "../../../apis/reviews.api";
 import { featBus } from "../../../apis/buses.api";
 import { featBooking } from "../../../apis/booking.api";
 import { featSchedule } from "../../../apis/schedule.api";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function AdminReport() {
   const { Column } = Table;
@@ -27,6 +26,7 @@ export default function AdminReport() {
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(featRoutes());
@@ -75,9 +75,6 @@ export default function AdminReport() {
       (b) =>
         b.bus_id === booking.bus_id && b.schedule_id === booking.schedule_id
     );
-
-    console.log(sameBusBookings);
-
     const totalTickets = sameBusBookings.length;
     const cancelledTickets = sameBusBookings.filter(
       (b) => b.status === "Cancelled"
@@ -91,7 +88,8 @@ export default function AdminReport() {
         : 0;
 
     return {
-      id: booking.id,
+      id: booking?.id,
+      company_id: company?.bus_companies_id,
       bus_name: bus?.bus_name ?? "",
       company_name: company?.company_name ?? "",
       route: routeTrip,
@@ -109,6 +107,7 @@ export default function AdminReport() {
         const key = `${ticket.company_name}-${ticket.route}`;
         if (!acc[key]) {
           acc[key] = {
+            company_id: ticket.company_id ?? "",
             company_name: ticket.company_name,
             route: ticket.route,
             total_ticket: 0,
@@ -129,6 +128,7 @@ export default function AdminReport() {
       {} as Record<
         string,
         {
+          company_id: string;
           company_name: string;
           route: string;
           total_ticket: number;
@@ -140,6 +140,7 @@ export default function AdminReport() {
       >
     )
   ).map((item) => ({
+    company_id: item.company_id,
     company_name: item.company_name,
     route: item.route,
     total_ticket: item.total_ticket,
@@ -205,8 +206,14 @@ export default function AdminReport() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
 
-    XLSX.writeFile(workbook, "danh_sach_don_ve.xlsx");
+    XLSX.writeFile(workbook, "Báo cáo & thống kê.xlsx");
   };
+
+  function handleDetail(id: string) {
+    navigate(`/admin/report/detail/${id}`);
+  }
+
+  console.log(groupTripInfo);
 
   return (
     <div>
@@ -365,13 +372,19 @@ export default function AdminReport() {
               key="action"
               render={(_, record) => (
                 <Space>
-                  <Button type="link">Chi tiết</Button>
+                  <Button
+                    onClick={() => handleDetail(record.company_id)}
+                    type="link"
+                  >
+                    Chi tiết
+                  </Button>
                 </Space>
               )}
             />
           </Table>
         </div>
       </div>
+      <Outlet></Outlet>
     </div>
   );
 }

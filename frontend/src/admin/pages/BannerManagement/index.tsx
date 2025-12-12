@@ -2,102 +2,85 @@ import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
-import { Button, Input, Table } from "antd";
-
+import { Button, Input, Space, Table } from "antd";
 import * as XLSX from "xlsx";
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import type { CancellationPolicies } from "../../../interfaces/Schedules";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { AppDispatch, RootState } from "../../../stores/store";
-import { featCancelTickets } from "../../../apis/cancelled_tickets.api";
 import ModalBanner from "../../components/Modals/Banners/ModalBanner";
+import type { Banner } from "../../../interfaces/Banner";
+import { addBanner, deleteBanner, featBanner } from "../../../apis/banner.api";
 
 export default function BannerManagementScreen() {
   const { Column } = Table;
   const [searchText, setSearchText] = useState("");
-  const [sortValue, setSortValue] = useState("all");
-  const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
-  const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
-  // const [isOpen,]
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectBanner, setSelectBanner] = useState<Banner | null>(null);
+  const [modal, setModal] = useState<"add" | "edit">("add");
+
+  function handleOK(banner: Banner) {
+    if (modal === "add") {
+      dispatch(addBanner(banner));
+    } else {
+      dispatch(addBanner(banner));
+    }
+    setIsOpen(false);
+  }
+  function handleCancel() {
+    setIsOpen(false);
+  }
+
+  function handleOpenAdd() {
+    setModal("add");
+    setIsOpen(true);
+  }
+
+  function handleEdit(banner : Banner) {
+    setModal("edit");
+    setSelectBanner(banner);
+    setIsOpen(true);
+  }
 
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(featCancelTickets());
+    dispatch(featBanner());
   }, [dispatch]);
 
-  function formatISO(dateStr: string) {
-    const d = new Date(dateStr);
-    const pad = (n: number) => n.toString().padStart(2, "0");
+  const banners = useSelector((state: RootState) => state.banners.banners);
 
-    return `${pad(d.getHours())}:${pad(d.getMinutes())} - ${pad(
-      d.getDate()
-    )}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
-  }
-  function diffTime(start: string | Date, end: string | Date) {
-    const d1 = new Date(start);
-    const d2 = new Date(end);
+  const handleDelete = (banner: Banner) => {
+    dispatch(deleteBanner(String(banner.id)));
+  };
 
-    const diffMs = d2.getTime() - d1.getTime(); // chênh lệch ms
+  const filteredData = banners.filter((b) => {
+    if (
+      searchText &&
+      !b.position.toLowerCase().includes(searchText.toLowerCase())
+    )
+      return false;
+    return true;
+  });
 
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  const ExportExcel = () => {
+    const sheetData = banners.map((item, index) => ({
+      STT: index + 1,
+      Mã_Banner: item.banner_id,
+      Vị_Trí: item.position,
+      Ảnh: item.banner_url,
+    }));
 
-    return { diffHours, diffMinutes };
-  }
+    const worksheet = XLSX.utils.json_to_sheet(sheetData);
 
+    worksheet["!cols"] = Object.keys(sheetData[0]).map(() => ({ wch: 20 }));
 
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
 
-  const cancelTickets = useSelector(
-    (state: RootState) => state.cancelTickets.cancelTickets
-  );
-
-  // const filteredData = cancelTickets
-  //   .filter((b) => {
-  //     if (seatFilter && b.seat_type !== seatFilter) return false;
-
-  //     if (statusFilter && b.status !== statusFilter) return false;
-
-  //     if (
-  //       searchText &&
-  //       !b.id.toLowerCase().includes(searchText.toLowerCase()) &&
-  //       !b.schedule_id.toLowerCase().includes(searchText.toLowerCase())
-  //     )
-  //       return false;
-  //     return true;
-  //   })
-  //   .sort((a, b) => {
-  //     if (sortValue === "price") return a.price - b.price;
-  //     if (sortValue === "time")
-  //       return (
-  //         new Date(a.departure_time).getTime() -
-  //         new Date(b.departure_time).getTime()
-  //       );
-  //     return 0;
-  //   });
-
-  // const ExportExcel = () => {
-  //   const sheetData = cancelTickets.map((item) => ({
-  //     ...item,
-  //     departure_time: item.departure_time.toLocaleString(),
-  //     arrival_time: item.arrival_time.toLocaleString(),
-  //     created_at: item.created_at.toLocaleString(),
-  //     updated_at: item.updated_at.toLocaleString(),
-  //   }));
-
-  //   const worksheet = XLSX.utils.json_to_sheet(sheetData);
-
-  //   worksheet["!cols"] = Object.keys(sheetData[0]).map(() => ({ wch: 20 }));
-
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách");
-
-  //   XLSX.writeFile(workbook, "danh_sach_don_ve.xlsx");
-  // };
-  console.log(cancelTickets);
-  
+    XLSX.writeFile(workbook, "danh_sach_banner.xlsx");
+  };
 
   return (
     <div>
@@ -132,97 +115,90 @@ export default function BannerManagementScreen() {
 
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
         <div className="flex gap-4 justify-between">
-           <Button type="primary">Thêm Banner</Button>
+          <Button type="primary" onClick={handleOpenAdd}>
+            Thêm Banner
+          </Button>
           <div className="flex gap-4">
             <div
-              // onClick={ExportExcel}
+              onClick={ExportExcel}
               className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-30 h-10 justify-center"
             >
               <img className="w-4 h-4" src={excel} alt="" />
               <p>Xuất file</p>
             </div>
 
-            <select
-              value={sortValue}
-              onChange={(e) => setSortValue(e.target.value)}
-              className=" rounded-md flex gap-2 items-center border-2 border-gray-400 w-35 justify-center"
-              name=""
-              id=""
-            >
-              <option value="all"> Sắp xếp tất cả</option>
-              <option value="price">Sắp xếp giá</option>
-              <option value="time">Sắp xếp thời gian</option>
-            </select>
-
-            <select
-              className="border rounded px-2 py-1"
-              value={seatFilter}
-              onChange={(e) => setSeatFilter(e.target.value)}
-            >
-              <option value="">Tất cả loại ghế</option>
-              <option value="LUXURY">LUXURY</option>
-              <option value="VIP">VIP</option>
-              <option value="STANDARD">STANDARD</option>
-            </select>
-
             <Input
-            onChange={(e) =>
-              setTimeout(() => {
-                setSearchText(e.target.value);
-              }, 500)
-            }
-            prefix={<SearchOutlined />}
-            placeholder="Tìm kiếm..."
-            style={{ width: 250, padding: "8px 12px" }}
-          />
+              onChange={(e) =>
+                setTimeout(() => {
+                  setSearchText(e.target.value);
+                }, 500)
+              }
+              prefix={<SearchOutlined />}
+              placeholder="Tìm kiếm..."
+              style={{ width: 250, padding: "8px 12px" }}
+            />
           </div>
         </div>
 
         {/* bảng dữ liệu */}
 
-        <Table<CancellationPolicies>
-          pagination={{ pageSize: 5 }}
-          dataSource={cancelTickets}
-        >
+        <Table<Banner> pagination={{ pageSize: 5 }} dataSource={filteredData}>
           <Column
             title="STT"
             key="index"
             render={(_, __, index) => index + 1}
           />
+          <Column title="Mã Banner" dataIndex="banner_id" key="banner_id" />
 
           <Column
-            title="Mã hủy vé"
-            dataIndex="cancellation_policies_id"
-            key="cancellation_policies_id"
-          />
-          <Column title="Mô tả" dataIndex="descriptions" key="descriptions" />
-          <Column title="Mã tuyến đường" dataIndex="route_id" key="route_id" />
-
-          <Column
-            title="Giờ trước khi khởi hành"
-            dataIndex="cancellation_time_limit"
-            key="cancellation_time_limit"
-            render={(value) => formatISO(value)}
-          />
-
-          <Column
-            title="Phần trăm hoàn tiền"
-            dataIndex="refunc_percentage"
-            key="refunc_percentage"
-             render={(value) => `${value} %`}
+            title="Ảnh minh họa"
+            dataIndex="banner_url"
+            key="banner_url"
+            render={(url: string) => (
+              <img
+                src={url}
+                alt="banner"
+                style={{
+                  width: 50,
+                  height: 50,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                }}
+              />
+            )}
           />
 
+          <Column title="Vị trí" dataIndex="position" key="position" />
           <Column
-            title="Ngày tạo"
-            dataIndex="created_at"
-            key="created_at"
-            render={(value) => formatISO(value)}
+            title="Hành động"
+            key="action"
+            render={(_, record: Banner) => (
+              <Space className="">
+                <div className="flex gap-4">
+                  <EditOutlined
+                  style={{ color: "#1677ff", fontSize: 15, cursor: "pointer" }}
+                  onClick={() => handleEdit(record)}
+                />
+
+                <DeleteOutlined
+                  style={{ color: "red", fontSize: 15, cursor: "pointer" }}
+                  onClick={() => handleDelete(record)}
+                />
+                </div>
+              </Space>
+            )}
           />
         </Table>
       </div>
-      <><ModalBanner
-      
-      ></ModalBanner></>
+      <>
+        <ModalBanner
+          modal={modal}
+          open={isOpen}
+          onOk={handleOK}
+          onCancel={handleCancel}
+          initial={selectBanner ?? undefined}
+        ></ModalBanner>
+      </>
     </div>
   );
 }
