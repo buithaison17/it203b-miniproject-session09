@@ -4,6 +4,7 @@ import benxe from "../../../assets/imgs/ben-xe1.png";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../../stores/store";
 import { featBusCompany } from "../../../apis/bus_companies.api";
+
 export default function BusCompany() {
   const dispatch = useDispatch<AppDispatch>();
   const { busCompany, status } = useSelector((s: RootState) => s.busCompanys);
@@ -15,7 +16,7 @@ export default function BusCompany() {
   }, [dispatch, status]);
 
   return (
-      <div className="pt-[140px] pr-[170px] pl-[170px]" >
+      <div className=" pr-[170px] pl-[170px]" >
       {/* TITLE */}
       <div className="flex pb-6 justify-center items-center gap-2 ">
         <div className="w-[3px] h-[40px] bg-yellow-500"></div>
@@ -84,7 +85,7 @@ export default function BusCompany() {
 
 
       {/* FOOTER */}
-      <p className="text-sm text-gray-600 ">
+      <p className="text-sm text-gray-600 pb-20">
         Nhà xe – Vivutoday.com | Hệ thống đặt vé xe online cao cấp, dễ dàng tra cứu giá vé,
         lịch trình, số điện thoại, tuyến đường của 1000+ hãng xe chất lượng tốt nhất.
       </p>

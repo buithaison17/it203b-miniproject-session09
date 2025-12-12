@@ -46,7 +46,7 @@ const HomepageScreen = () => {
 
   return (
     <>
-      <main className="flex flex-col items-center justify-center pt-25">
+      <main className="flex flex-col items-center justify-center ">
 
       <div className="relative">
         <img src={brand} alt="banner" className="w-full hidden lg:block" />
