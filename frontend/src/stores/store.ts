@@ -7,6 +7,8 @@ import  ReviewSlice  from "../apis/reviews.api";
 import  BusSlice  from "../apis/buses.api";
 import  ScheduleSlice  from "../apis/schedule.api";
 import StationSlice from "./stationSlice";
+import BannerSlice  from "../apis/banner.api";
+import PaymentProviderSlice from "../apis/provider.api";
 export const store = configureStore({
   reducer: {
     tickets : BookingSlice,
@@ -16,7 +18,9 @@ export const store = configureStore({
     cancelTickets : CancelSlice,
     reviews : ReviewSlice,
     schedules : ScheduleSlice,
-    station : StationSlice
+    station : StationSlice,
+    banners : BannerSlice,
+    paymentProvider : PaymentProviderSlice
   },
 });
 export default store

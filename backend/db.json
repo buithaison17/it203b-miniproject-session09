@@ -6,7 +6,8 @@
       "image": "https://example.com/images/hoanglong.jpg",
       "descriptions": "Nhà xe lâu đời, phục vụ các tuyến Bắc - Nam với chất lượng cao.",
       "created_at": "2025-01-01T09:00:00",
-      "updated_at": "2025-01-01T09:00:00"
+      "updated_at": "2025-01-01T09:00:00",
+      "id": "8d95"
     },
     {
       "bus_companies_id": "comp_02",
@@ -14,7 +15,8 @@
       "image": "https://example.com/images/phuongtrang.jpg",
       "descriptions": "Xe giường nằm, đội ngũ tài xế chuyên nghiệp, phục vụ tận tâm.",
       "created_at": "2025-01-02T14:20:00",
-      "updated_at": "2025-01-02T14:20:00"
+      "updated_at": "2025-01-02T14:20:00",
+      "id": "f4cd"
     },
     {
       "bus_companies_id": "comp_03",
@@ -22,7 +24,8 @@
       "image": "https://example.com/images/thanhbuoi.jpg",
       "descriptions": "Tuyến Sài Gòn – Đà Lạt, nổi tiếng về sự an toàn và đúng giờ.",
       "created_at": "2025-01-04T11:45:00",
-      "updated_at": "2025-01-04T11:45:00"
+      "updated_at": "2025-01-04T11:45:00",
+      "id": "d6c3"
     },
     {
       "bus_companies_id": "comp_04",
@@ -30,7 +33,8 @@
       "image": "https://example.com/images/haiau.jpg",
       "descriptions": "Xe chất lượng cao chuyên tuyến Hải Phòng – Hà Nội.",
       "created_at": "2025-01-06T16:10:00",
-      "updated_at": "2025-01-06T16:10:00"
+      "updated_at": "2025-01-06T16:10:00",
+      "id": "f034"
     },
     {
       "bus_companies_id": "comp_05",
@@ -38,9 +42,11 @@
       "image": "https://example.com/images/kumho.jpg",
       "descriptions": "Thương hiệu nổi tiếng từ Hàn Quốc, xe mạnh – sạch – mới.",
       "created_at": "2025-01-08T13:30:00",
-      "updated_at": "2025-01-08T13:30:00"
+      "updated_at": "2025-01-08T13:30:00",
+      "id": "83b9"
     }
-  ], "schedules": [
+  ],
+  "schedules": [
     {
       "id": "sch1",
       "route_id": "R001",
@@ -102,7 +108,6 @@
       "updated_at": "2025-12-09T09:00:00.000Z"
     }
   ],
-
   "buses": [
     {
       "id": "bus_01",
@@ -155,7 +160,6 @@
       "updated_at": "2024-07-10T13:00:00Z"
     }
   ],
-
   "reviews": [
     {
       "review_id": "R001",
@@ -164,7 +168,8 @@
       "rating": 5,
       "review": "Xe chạy êm, tài xế vui tính.",
       "created_at": "2025-01-12T10:20:00",
-      "updated_at": "2025-01-12T10:20:00"
+      "updated_at": "2025-01-12T10:20:00",
+      "id": "3575"
     },
     {
       "review_id": "R002",
@@ -173,7 +178,8 @@
       "rating": 4,
       "review": "Ghế ngồi ổn, đi tuyến ngắn hợp lý.",
       "created_at": "2025-01-14T09:15:00",
-      "updated_at": "2025-01-14T09:15:00"
+      "updated_at": "2025-01-14T09:15:00",
+      "id": "df05"
     },
     {
       "review_id": "R003",
@@ -182,7 +188,8 @@
       "rating": 3,
       "review": "Đi tạm ổn, hơi đông.",
       "created_at": "2025-01-15T08:45:00",
-      "updated_at": "2025-01-15T08:45:00"
+      "updated_at": "2025-01-15T08:45:00",
+      "id": "a774"
     },
     {
       "review_id": "R004",
@@ -191,7 +198,8 @@
       "rating": 5,
       "review": "Xe VIP đúng chất, sẽ ủng hộ lần sau.",
       "created_at": "2025-01-16T11:30:00",
-      "updated_at": "2025-01-16T11:30:00"
+      "updated_at": "2025-01-16T11:30:00",
+      "id": "d0e5"
     },
     {
       "review_id": "R005",
@@ -200,10 +208,10 @@
       "rating": 2,
       "review": "Đi chưa tốt lắm.",
       "created_at": "2025-01-17T13:55:00",
-      "updated_at": "2025-01-17T13:55:00"
+      "updated_at": "2025-01-17T13:55:00",
+      "id": "32e2"
     }
   ],
-
   "cancelled_tickets": [
     {
       "cancellation_policies_id": "C001",
@@ -213,7 +221,8 @@
       "cancellation_time_limit": 120,
       "refunc_percentage": 50,
       "created_at": "2025-01-18T09:00:00",
-      "updated_at": "2025-01-18T09:00:00"
+      "updated_at": "2025-01-18T09:00:00",
+      "id": "7061"
     },
     {
       "cancellation_policies_id": "C002",
@@ -223,10 +232,10 @@
       "cancellation_time_limit": 60,
       "refunc_percentage": 20,
       "created_at": "2025-01-18T09:00:00",
-      "updated_at": "2025-01-18T09:00:00"
+      "updated_at": "2025-01-18T09:00:00",
+      "id": "bc55"
     }
   ],
-
   "routes": [
     {
       "id": "R001",
@@ -249,7 +258,6 @@
       "updated_at": "2025-01-06T09:00:00"
     }
   ],
-
   "tickets": [
     {
       "id": "T001",
@@ -315,6 +323,85 @@
       "arrival_time": "2025-01-25T12:00:00",
       "created_at": "2025-01-14T09:15:00",
       "updated_at": "2025-01-14T09:15:00"
+    }
+  ],
+  "banners": [
+    {
+      "id": "a82c",
+      "banner_id": "cvbnm",
+      "banner_url": "https://res.cloudinary.com/deyuvrsv9/image/upload/v1765507575/oa5qsitrtyllqmgo1wyv.png",
+      "position": "sdfg"
+    },
+    {
+      "id": "42d5",
+      "banner_id": "cvbnm",
+      "banner_url": "https://res.cloudinary.com/deyuvrsv9/image/upload/v1765507616/phrbaofhffwszrqjeoyf.png",
+      "position": "sdfg"
+    },
+    {
+      "id": "a8d5",
+      "banner_id": "cvbnm",
+      "banner_url": "https://res.cloudinary.com/deyuvrsv9/image/upload/v1765507883/zw8w5gduesdursktjsws.png",
+      "position": "sdfg"
+    },
+    {
+      "id": "33fb",
+      "banner_id": "ádfghj",
+      "banner_url": "https://res.cloudinary.com/deyuvrsv9/image/upload/v1765508019/sc4qhjeswjhfts6pifxb.png",
+      "position": "dfgbnm"
+    },
+    {
+      "id": "e829",
+      "banner_id": "BN001",
+      "banner_url": "https://res.cloudinary.com/deyuvrsv9/image/upload/v1765508585/fh20zndmxn177ot0hjpp.png",
+      "position": "content"
+    }
+  ],
+  "payment_provider": [
+    {
+      "payment_provider_id": 1,
+      "provider_name": "VNPay",
+      "provider_type": "QR_CODE",
+      "api_endpoint": "https://api.vnpay.vn/payment",
+      "created_at": "2025-01-10T10:00:00Z",
+      "updated_at": "2025-02-01T09:30:00Z",
+      "id": "b989"
+    },
+    {
+      "payment_provider_id": 2,
+      "provider_name": "MoMo",
+      "provider_type": "E-WALLET",
+      "api_endpoint": "https://api.momo.vn/v2/gateway",
+      "created_at": "2025-01-15T14:20:00Z",
+      "updated_at": "2025-02-02T11:10:00Z",
+      "id": "c3e5"
+    },
+    {
+      "payment_provider_id": 3,
+      "provider_name": "ZaloPay",
+      "provider_type": "E-WALLET",
+      "api_endpoint": "https://api.zalopay.vn/v1/pay",
+      "created_at": "2025-01-18T08:40:00Z",
+      "updated_at": "2025-02-03T10:00:00Z",
+      "id": "6823"
+    },
+    {
+      "payment_provider_id": 4,
+      "provider_name": "Napas",
+      "provider_type": "CARD",
+      "api_endpoint": "https://api.napas.com.vn/card/payment",
+      "created_at": "2025-01-20T09:00:00Z",
+      "updated_at": "2025-02-05T12:45:00Z",
+      "id": "1ce4"
+    },
+    {
+      "payment_provider_id": 5,
+      "provider_name": "Techcombank",
+      "provider_type": "BANK_TRANSFER",
+      "api_endpoint": "https://api.techcombank.com.vn/transfer",
+      "created_at": "2025-01-22T11:30:00Z",
+      "updated_at": "2025-02-06T13:00:00Z",
+      "id": "4f13"
     }
   ]
 }
