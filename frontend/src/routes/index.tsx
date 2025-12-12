@@ -3,14 +3,10 @@ import AdminManager from "../admin/components/AdminManager";
 import OderManager from "../admin/pages/OrderManagement/index";
 import AdminReport from "../admin/pages/AdminReport/index";
 import StationManagers from "../admin/pages/StationManagement/index";
-import BusManagementScreen from "../admin/pages/BusManagement";
+import BusManager from "../admin/pages/BusManagement/index";
 import BannerManagementScreen from "../admin/pages/BannerManagement";
-import AccountManagementScreen from "../admin/pages/AccountManagement";
 import CancellationManagementScreen from "../admin/pages/CancellationManagement";
 import PaymentProviderManagementScreen from "../admin/pages/PaymentProviderManagement";
-import ScheduleManagementScreen from "../admin/pages/ScheduleManagement";
-import SeatManagementScreen from "../admin/pages/SeatManagement";
-import TripManagementScreen from "../admin/pages/TripManagement";
 import LoginScreen from "../pages/Auth/Login";
 import RegisterScreen from "../pages/Auth/Register";
 import Layout from "../components/Layout";
@@ -22,7 +18,12 @@ import IntroductionScreen from "../pages/Introduction";
 import CheckticketScreen from "../pages/CheckTicket";
 import PostScreen from "../pages/Post";
 import Station from "../pages/Information/Station/Station";
-
+import BusCompanyManager from "../admin/pages/BusCompanyManagement";
+import UserManager from "../admin/pages/AccountManagement";
+import SeatManager from "../admin/pages/SeatManagement";
+import RoutesManager from "../admin/pages/RoutesManagement";
+import SchedulesManager from "../admin/pages/SchedulesManagement";
+import BookingHistoryScreen from "../pages/BookingHistory/BookingHistory";
 
 export const routers = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ export const routers = createBrowserRouter([
         path: "post:id",
         element: <PostScreen />,
       },
+      {
+        path: "booking-history",
+        element: <BookingHistoryScreen />,
+      },
     ],
   },
 
@@ -91,16 +96,20 @@ export const routers = createBrowserRouter([
         element: <StationManagers />,
       },
       {
+        path: "busCompany",
+        element: <BusCompanyManager />,
+      },
+      {
         path: "bus",
-        element: <BusManagementScreen />,
+        element: <BusManager />,
       },
       {
         path: "banner",
         element: <BannerManagementScreen />,
       },
       {
-        path: "account",
-        element: <AccountManagementScreen />,
+        path: "user",
+        element: <UserManager />,
       },
       {
         path: "cancel",
@@ -112,35 +121,16 @@ export const routers = createBrowserRouter([
       },
       {
         path: "schedule",
-        element: <ScheduleManagementScreen />,
+        element: <SchedulesManager />,
       },
       {
         path: "seat",
-        element: <SeatManagementScreen />,
+        element: <SeatManager />,
       },
       {
-        path: "trip",
-        element: <TripManagementScreen />,
+        path: "routes",
+        element: <RoutesManager />,
       },
-    ],
-  },
-  {
-    path: "/admin",
-    element: <AdminManager />,
-
-    children: [
-      {
-        path: "order",
-        element: <OderManager />,
-      },
-      {
-        path: "report",
-        element: <AdminReport />,
-      },
-      {
-        path: "station",
-        element: <StationManagers />,
-      }
     ],
   },
 ]);

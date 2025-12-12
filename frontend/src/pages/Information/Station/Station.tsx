@@ -1,68 +1,89 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import Location from "../../../assets/icons/location.png";
+import benxe from "../../../assets/imgs/ben-xe1.png";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../../../stores/store";
+import { fetchStationsThunk } from "../../../apis/station.api";
 export default function Station() {
-  const busCompanies = [
-    { id: 1, name: "Nhà xe Thanh Nhung", img: "" },
-    { id: 2, name: "Nhà xe Xuân Quỳnh", img: "" },
-    { id: 3, name: "Nhà xe Quang Giang (Quang Tuyền)", img: "" },
-    { id: 4, name: "Nhà xe Văn Năm", img: "" },
-    { id: 5, name: "Nhà xe Chí Tâm", img: "" },
-    { id: 6, name: "Nhà xe Hồng Thịnh", img: "" },
-    { id: 7, name: "Nhà xe Bình Hà", img: "" },
-    { id: 8, name: "Nhà xe Khang Phát", img: "" },
-  ];
+  const dispatch = useDispatch<AppDispatch>();
+  const { stations, loading } = useSelector((s: RootState) => s.station);
+
+  useEffect(() => {
+    if (!loading && stations.length === 0) {
+      dispatch(fetchStationsThunk());
+    }
+  }, [dispatch, loading, stations.length]);
 
   return (
-    <div className="w-full px-4 md:px-10 lg:px-32 mt-20 mb-20">
-
+    <div className=" pr-[170px] pl-[170px]">
       {/* TITLE */}
-      <div className="flex justify-center items-center gap-2 mb-6">
-        <div className="w-[3px] h-[40px] bg-yellow-400"></div>
-        <h2 className="text-4xl font-bold">BẾN XE</h2>
+      <div className="flex pb-6 justify-center items-center gap-2 ">
+        <div className="w-[3px] h-[40px] bg-yellow-500"></div>
+        <h2 className="pt-4 pb-4 text-4xl font-bold tracking-wide">BẾN XE</h2>
       </div>
 
       {/* GRID CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-        {busCompanies.map((bus) => (
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+        {stations.map((st) => (
           <div
-            key={bus.id}
-            className="w-[260px] h-[286px] bg-white rounded-xl shadow hover:shadow-lg transition p-2 cursor-pointer flex flex-col"
+            key={st.id}
+            className="w-[260px] h-[300px] bg-white rounded-2xl shadow hover:shadow-xl transition cursor-pointer flex flex-col "
           >
-            <img
-              src={bus.img}
-              alt={bus.name}
-              className="w-full h-[160px] object-cover rounded-lg"
-            />
+            <div className="relative">
+              <img
+                src={benxe as unknown as string}
+                alt={st.name}
+                className="w-full h-[160px] object-cover rounded-xl"
+              />
+            </div>
 
-            <div className="mt-3 flex-1 flex flex-col">
-              <h3 className="font-semibold text-[15px] leading-tight">{bus.name}</h3>
-              <p className="text-xs mt-1 text-black flex-1">
-                Ảnh xe + Tuyến đường chi tiết (demo)
-              </p>
+            {/* TAG + BRAND */}
 
-
+            {/* NAME + ROUTE */}
+            <div className="p-4">
+              <h3 className="font-semibold text-[15px] leading-tight ">
+                {st.name}
+              </h3>
+              <div className="flex items-start gap-1 mt-1">
+                <div className="w-[20px] h-[13px]">
+                  <img src={Location} alt="" />
+                </div>
+                <div>
+                  <p className="text-xs text-black line-clamp-2 flex-1">
+                    {st.location}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {/* PAGINATION */}
-      <div className="flex justify-center gap-2 mt-10">
-        {[1,2,3,4,5, "...", 149].map((p, i) => (
+      <div className="flex justify-center gap-2 mt-10 mb-6">
+        {[1, 2, 3, 4, 0, 149].map((p, i) => (
           <button
             key={i}
             className={`w-8 h-8 flex items-center justify-center rounded-full border 
-              ${p === 1 ? "bg-blue-500 text-white" : "bg-white text-black hover:bg-gray-200"}
+              ${
+                p === 1
+                  ? "bg-blue-500 text-white"
+                  : p === 0
+                  ? "border-none text-black"
+                  : "bg-white text-black hover:bg-gray-200"
+              }
             `}
           >
-            {p}
+            {p === 0 ? "..." : p}
           </button>
         ))}
       </div>
 
-      {/* FOOTER TEXT */}
-      <p className="text-center mt-10 text-sm text-gray-600 max-w-3xl mx-auto">
-Tập hợp các bến xe và thông tin chi tiết lịch trình, giờ khởi hành của các nhà xe có tại bến.
+      {/* FOOTER */}
+      <p className="text-sm text-gray-600 ">
+        Bến xe – Vivutoday.com | Hệ thống đặt vé xe online cao cấp, dễ dàng tra
+        cứu giá vé, lịch trình, số điện thoại, tuyến đường của 1000+ hãng xe
+        chất lượng tốt nhất.
       </p>
     </div>
   );

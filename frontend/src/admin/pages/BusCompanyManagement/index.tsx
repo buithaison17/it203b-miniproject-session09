@@ -7,7 +7,6 @@ import {
   Tooltip,
   Popconfirm,
   message,
-  Tag,
 } from "antd";
 import {
   DeleteOutlined,
@@ -16,26 +15,26 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
+
 import { useAppSelector, useAppDispatch } from "../../../hooks/CustomHook";
-import type { Bus } from "../../../interfaces/Bus";
-import BusModal from "../../components/Modals/Bus/BusModal";
+import {
+  fetchBusCompanyThunk,
+  addBusCompanyThunk,
+  updateBusCompanyThunk,
+  deleteBusCompanyThunk,
+} from "../../../apis/busCompany.api";
+import type { BusCompany } from "../../../interfaces/Bus";
+import BusCompanyModal from "../../components/Modals/BusCompany/CompanyModal";
 
 import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
-import {
-  addBusThunk,
-  deleteBusThunk,
-  fetchBusesThunk,
-  updateBusThunk,
-  type CombinedBus,
-} from "../../../apis/bus.api";
 
 const { Column } = Table;
 
 // Hàm format ngày tháng
-const formatDateTime = (dateString: string | Date): string => {
+const formatDateTime = (dateString: string): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "N/A";
@@ -51,156 +50,145 @@ const formatDateTime = (dateString: string | Date): string => {
   }
 };
 
-export default function BusManager() {
+export default function BusCompanyManager() {
   const dispatch = useAppDispatch();
-  const { buses, error } = useAppSelector((state) => state.buses);
+  const { busCompany, loading, error } = useAppSelector(
+    (state) => state.busCompany
+  );
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingBus, setEditingBus] = useState<CombinedBus | null>(null);
+  const [editingCompany, setEditingCompany] = useState<BusCompany | null>(null);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortType, setSortType] = useState<string>("id_desc");
 
+  // LOGIC LẤY DỮ LIỆU BAN ĐẦU
   useEffect(() => {
-    dispatch(fetchBusesThunk());
+    dispatch(fetchBusCompanyThunk());
     if (error) message.error(error);
   }, [dispatch, error]);
 
-  const filteredAndSortedBuses = useMemo(() => {
-    let result = buses.slice();
+  // --- HÀM TẠO ID CHUẨN ---
+  const generateNewCompanyId = () => {
+    const nxIds = busCompany
+      .map((c) => c.id)
+      .filter((id) => id.startsWith("NX"))
+      .map((id) => parseInt(id.replace("NX", "")))
+      .filter((num) => !isNaN(num));
 
-    // Tìm kiếm
+    const maxNum = nxIds.length > 0 ? Math.max(...nxIds) : 0;
+    const newIdNum = maxNum + 1;
+    const paddedNum = String(newIdNum).padStart(3, "0");
+
+    return `NX${paddedNum}`;
+  };
+
+  // --- LOGIC LỌC, TÌM KIẾM, SẮP XẾP ---
+  const filteredAndSortedCompanies = useMemo(() => {
+    let result = busCompany.slice();
+
+    // 1. Tìm kiếm (theo Tên Nhà xe hoặc Số ĐT/Mô tả)
     if (searchTerm) {
       result = result.filter(
-        (s) =>
-          s.bus_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          s.license_plate.toLowerCase().includes(searchTerm.toLowerCase())
+        (c) =>
+          c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          c.descriptions.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          c.phone.includes(searchTerm)
       );
     }
 
-    // Sắp xếp
+    // 2. Sắp xếp
     if (sortType === "updated_desc") {
       result.sort(
         (a, b) =>
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       );
+    } else if (sortType === "date_desc") {
+      result.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
     } else if (sortType === "id_desc") {
-      // Sắp xếp theo ID giảm dần
       result.sort((a, b) => {
-        // Lấy phần số của ID
-        const numA = parseInt(a.id.replace("X", ""));
-        const numB = parseInt(b.id.replace("X", ""));
-
-        // Sắp xếp giảm dần: b - a
+        const numA = parseInt(a.id.replace("NX", ""));
+        const numB = parseInt(b.id.replace("NX", ""));
         return numB - numA;
       });
     }
 
     return result;
-  }, [buses, searchTerm, sortType]);
+  }, [busCompany, searchTerm, sortType]);
 
-  const generateNewBusId = () => {
-    const xIds = buses
-      .map((b) => b.id)
-      .filter((id) => id.startsWith("X"))
-      .map((id) => parseInt(id.replace("X", "")))
-      .filter((num) => !isNaN(num));
+  // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
 
-    const maxNum = xIds.length > 0 ? Math.max(...xIds) : 0;
-    const newIdNum = maxNum + 1;
-
-    return `X${String(newIdNum).padStart(3, "0")}`;
-  };
-
-  const handleSave = (
-    busData: Bus,
-    imagesToDelete: string[],
-    _filesToUpload: File[],
-    uploadedUrls: string[]
-  ) => {
-    const finalPayload = {
-      bus: busData,
-      imagesToDelete: imagesToDelete,
-      imagesToAdd: uploadedUrls, // Dùng URL đã được upload từ Modal
-    };
-
+  const handleSave = (companyData: BusCompany) => {
     if (isEditingMode) {
-      // Gọi UPDATE (Sửa xe + xử lý ảnh)
-      dispatch(updateBusThunk(finalPayload));
+      dispatch(updateBusCompanyThunk(companyData));
+      message.success("Đang cập nhật nhà xe...");
     } else {
-      // Gọi ADD (Thêm xe + thêm ảnh)
-      const addPayload = {
-        bus: busData,
-        newImageUrls: uploadedUrls,
-      };
-      dispatch(addBusThunk(addPayload));
+      dispatch(addBusCompanyThunk(companyData));
+      message.success("Đang thêm nhà xe...");
     }
-
-    message.success("Đang xử lý dữ liệu xe và hình ảnh...");
     setIsModalVisible(false);
-    setEditingBus(null);
+    setEditingCompany(null);
   };
 
   const handleAdd = () => {
     const now = new Date().toISOString();
-    const newId = generateNewBusId();
+    const newId = generateNewCompanyId();
 
-    setEditingBus({
+    setEditingCompany({
       id: newId,
-      company_id: "",
-      bus_name: "",
+      name: "",
+      image: "",
       descriptions: "",
-      license_plate: "",
-      capacity: 0,
-      images: [],
-      created_at: now.toString(),
-      updated_at: now.toString(),
-    } as unknown as CombinedBus);
+      phone: "",
+      license: "",
+      created_at: now,
+      updated_at: now,
+    } as any);
 
     setIsEditingMode(false);
     setIsModalVisible(true);
   };
 
-  const handleEdit = (bus: CombinedBus) => {
-    setEditingBus(bus);
+  const handleEdit = (company: BusCompany) => {
+    setEditingCompany(company);
     setIsEditingMode(true);
     setIsModalVisible(true);
   };
 
   const handleDelete = (id: string) => {
-    // Gọi DELETE thunk (sẽ xử lý cả ảnh liên quan)
-    dispatch(deleteBusThunk(id));
-    message.loading("Đang xóa xe...", 0.5);
+    dispatch(deleteBusCompanyThunk(id));
+    message.loading("Đang xóa nhà xe...", 0.5);
   };
 
   const handleExportExcel = () => {
-    if (filteredAndSortedBuses.length === 0) {
-      message.warning("Không có dữ liệu xe để xuất file.");
+    if (filteredAndSortedCompanies.length === 0) {
+      message.warning("Không có dữ liệu để xuất file.");
       return;
     }
 
-    const exportData = filteredAndSortedBuses.map((b) => ({
-      ID: b.id,
-      "ID Nhà Xe": b.company_id,
-      "Tên Xe": b.name,
-      "Biển Số": b.license_plate,
-      "Số Ghế": b.capacity,
-      "Mô Tả": b.descriptions,
-      "Ngày Tạo": formatDateTime(b.created_at),
-      "Ngày Cập Nhật": formatDateTime(b.updated_at),
+    // Chuẩn bị dữ liệu để xuất file
+    const exportData = filteredAndSortedCompanies.map((c) => ({
+      ID: c.id,
+      "Tên Nhà Xe": c.name,
+      "Mô Tả": c.descriptions,
+      "Số ĐT": c.phone,
+      "Giấy phép": c.license,
+      "Ngày Tạo": formatDateTime(c.created_at),
+      "Ngày Cập Nhật": formatDateTime(c.updated_at),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
-
-    worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 20 }));
-
+    worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 25 }));
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Xe");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Nha_Xe");
 
     try {
       XLSX.writeFile(
         workbook,
-        "Danh_sach_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
+        "Danh_sach_Nha_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
       );
       message.success("Đã xuất file Excel thành công!");
     } catch (e) {
@@ -215,12 +203,11 @@ export default function BusManager() {
         <div className="flex items-center gap-3">
           <img src={home} alt="" />
           <img src={hide} className="rotate-90" alt="" />
-          <p className="font-both">Quản lý xe</p>
+          <p className="font-both">Quản lý nhà xe</p>
         </div>
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
-          <div className="text-4xl">Danh sách xe</div>
-          {/* ... (Phần Avatar và Logout giữ nguyên) ... */}
+          <div className="text-4xl">Danh sách nhà xe</div>
           <div className="flex items-center gap-4 p-2 bg-white rounded-lg shadow-sm">
             {/* Avatar */}
             <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold text-lg">
@@ -242,7 +229,7 @@ export default function BusManager() {
         <div className="flex gap-4 justify-between">
           {/* BÊN TRÁI: THÊM */}
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            Thêm Xe
+            Thêm Nhà Xe
           </Button>
 
           {/* BÊN PHẢI: XUẤT, LỌC, TÌM KIẾM */}
@@ -262,14 +249,15 @@ export default function BusManager() {
               onChange={(e) => setSortType(e.target.value)}
               value={sortType}
             >
-              <option value="id_desc">ID Xe (Mới nhất)</option>
+              <option value="id_desc">ID Nhà Xe (Mới nhất)</option>
+              <option value="date_desc">Ngày tạo (Mới nhất)</option>
               <option value="update_desc">Ngày cập nhật (Mới nhất)</option>
             </select>
 
             {/* Input Tìm kiếm */}
             <Input
               prefix={<SearchOutlined />}
-              placeholder="Tìm kiếm theo Tên/Biển số..."
+              placeholder="Tìm kiếm theo Tên/Mô tả/SĐT..."
               style={{ width: 250 }}
               size="large"
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -279,27 +267,23 @@ export default function BusManager() {
         </div>
       </div>
 
-      {/* --- BẢNG XE --- */}
-      <Table<CombinedBus>
+      {/* --- BẢNG NHÀ XE --- */}
+      <Table<BusCompany>
+        loading={loading}
         pagination={{ pageSize: 5 }}
-        dataSource={filteredAndSortedBuses}
+        dataSource={filteredAndSortedCompanies}
         rowKey="id"
         className="p-4"
       >
         <Column title="ID" dataIndex="id" key="id" width={80} />
-        <Column title="ID Nhà Xe" dataIndex="company_id" key="company_id" />
-        <Column title="Tên Xe" dataIndex="name" key="name" />
+        <Column title="Tên Nhà Xe" dataIndex="name" key="name" />
         <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
-        <Column title="Biển Số" dataIndex="license_plate" key="license_plate" />
-        <Column title="Số Ghế" dataIndex="capacity" key="capacity" />{" "}
-        {/* Sửa dataIndex */}
+        <Column title="Số ĐT" dataIndex="phone" key="phone" width={100} />
         <Column
-          title="Ảnh (Số lượng)"
-          key="image_count"
-          width={100}
-          render={(_, record: CombinedBus) => (
-            <Tag color="blue">{record.images.length}</Tag>
-          )}
+          title="Ngày Tạo"
+          dataIndex="created_at"
+          key="created_at"
+          render={(dateString: string) => formatDateTime(dateString)}
         />
         <Column
           title="Ngày Cập Nhật"
@@ -311,7 +295,7 @@ export default function BusManager() {
           title="Action"
           key="action"
           width={100}
-          render={(_, record: CombinedBus) => (
+          render={(_, record: BusCompany) => (
             <Space key={record.id}>
               <Tooltip title="Sửa">
                 <Button
@@ -333,11 +317,11 @@ export default function BusManager() {
         />
       </Table>
       {/* --- MODAL THÊM/SỬA --- */}
-      <BusModal
+      <BusCompanyModal // <-- Đã đổi tên Modal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSave}
-        initialData={editingBus}
+        initialData={editingCompany}
         isEditModeProp={isEditingMode}
       />
     </div>

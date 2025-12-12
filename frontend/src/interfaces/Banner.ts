@@ -1,5 +1,6 @@
 export interface Banner {
-  id: string;
-  url: string;
+  banner_id: string;
+  banner_url: string;
   position: string;
+  id?:string;
 }

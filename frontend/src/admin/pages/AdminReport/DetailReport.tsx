@@ -7,38 +7,35 @@ import * as XLSX from "xlsx";
 import { SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { CancellationPolicies } from "../../../interfaces/Schedules";
 import type { AppDispatch, RootState } from "../../../stores/store";
-import type { PaymentProvider } from "../../../interfaces/Payment";
-import ModalPayment from "../../components/Modals/Payment/ModalPayment";
-import { featPaymentProvider } from "../../../apis/provider.api";
+import type { Banner } from "../../../interfaces/Banner";
+import { useParams } from "react-router-dom";
+import { featBusCompany } from "../../../apis/bus_companies.api";
+import { featBooking } from "../../../apis/booking.api";
+import type { BusCompany } from "../../../interfaces/Bus";
+import { featSchedule } from "../../../apis/schedule.api";
 
-export default function PaymentProviderManagement() {
+export default function DetailReport() {
   const { Column } = Table;
   const [searchText, setSearchText] = useState("");
   const [sortValue, setSortValue] = useState("all");
   const [seatFilter, setSeatFilter] = useState(""); // lọc theo loại ghế
   const [statusFilter, setStatusFilter] = useState(""); // lọc theo trạng thái
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectPayment, setSelectPayment] = useState<PaymentProvider | null>(
-    null
-  );
+  const [isOpen,setIsOpen] = useState(false);
+  const [selectBanner, setSelectBanner] = useState<Banner | null>(null)
 
-  function handleOK(payment_provider: PaymentProvider) {
-    setIsOpen(false);
-  }
-  function handleCancel() {
-    setIsOpen(false);
-  }
-
-  function handleOpen() {
-    setIsOpen(true);
-  }
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const { company_id } = useParams<string>();
+
+  console.log(company_id);
+  
+  
   useEffect(() => {
-    dispatch(featPaymentProvider());
+    dispatch(featBusCompany());
+    dispatch(featBooking());
+    dispatch(featSchedule());
   }, [dispatch]);
 
   function formatISO(dateStr: string) {
@@ -61,9 +58,26 @@ export default function PaymentProviderManagement() {
     return { diffHours, diffMinutes };
   }
 
-  const paymentProvider = useSelector(
-    (state: RootState) => state.paymentProvider.payment_provider
+
+
+  const companys = useSelector(
+    (state: RootState) => state.busCompanys.busCompany
   );
+
+    const bookings = useSelector(
+    (state: RootState) => state.tickets.tickets
+  );
+    const schedules = useSelector(
+    (state: RootState) => state.schedules.schedules
+  );
+
+  const groundCompany = companys.filter((element) => element.bus_companies_id === company_id)
+
+  const tripCompany = groundCompany.filter((element) => {
+    const tripBus = bookings.find((ticket) => ticket)
+  })
+  
+
 
   // const filteredData = cancelTickets
   //   .filter((b) => {
@@ -107,7 +121,7 @@ export default function PaymentProviderManagement() {
 
   //   XLSX.writeFile(workbook, "danh_sach_don_ve.xlsx");
   // };
-  console.log(paymentProvider);
+
 
   return (
     <div>
@@ -117,11 +131,14 @@ export default function PaymentProviderManagement() {
 
           <img src={hide} className="rotate-90" alt="" />
 
-          <p className="font-both">Danh sách nhà cung cấp thanh toán...</p>
+          <p className="font-both">Danh sách Báo cáo & Thống kê...</p>
+           <img src={hide} className="rotate-90" alt="" />
+
+          <p className="font-both">Chi tiết Báo cáo & Thống kê</p>
         </div>
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
-          <div className="text-4xl">Danh sách nhà cung cấp thanh toán </div>
+          <div className="text-4xl">{groundCompany[0].company_name} </div>
           {/* Đăng xuất */}
           <div className="flex items-center gap-4 p-2 bg-white rounded-lg shadow-sm">
             {/* Avatar */}
@@ -142,9 +159,16 @@ export default function PaymentProviderManagement() {
 
         {/* thêm,xuất excel, lọc, tìm kiếm, sắp xếp */}
         <div className="flex gap-4 justify-between">
-          <Button type="primary" onClick={handleOpen}>
-            Thêm nhà thanh toán
-          </Button>
+           <Input
+            onChange={(e) =>
+              setTimeout(() => {
+                setSearchText(e.target.value);
+              }, 500)
+            }
+            prefix={<SearchOutlined />}
+            placeholder="Tìm kiếm..."
+            style={{ width: 250, padding: "8px 12px" }}
+          />
           <div className="flex gap-4">
             <div
               // onClick={ExportExcel}
@@ -177,68 +201,37 @@ export default function PaymentProviderManagement() {
               <option value="STANDARD">STANDARD</option>
             </select>
 
-            <Input
-              onChange={(e) =>
-                setTimeout(() => {
-                  setSearchText(e.target.value);
-                }, 500)
-              }
-              prefix={<SearchOutlined />}
-              placeholder="Tìm kiếm..."
-              style={{ width: 250, padding: "8px 12px" }}
-            />
+           
           </div>
         </div>
 
         {/* bảng dữ liệu */}
 
-        <Table<PaymentProvider>
+        <Table<BusCompany>
           pagination={{ pageSize: 5 }}
-          dataSource={paymentProvider}
+          dataSource={companys}
+          rowKey="banner_id"
         >
-          <Column
+
+             <Column
             title="STT"
             key="index"
             render={(_, __, index) => index + 1}
           />
 
-          <Column
-            title="Mã nhà cung cấp"
-            dataIndex="payment_provider_id"
-            key="payment_provider_id"
-          />
-          <Column
-            title="Tên nhà cung cấp"
-            dataIndex="provider_name"
-            key="descriptions"
-          />
-          <Column
-            title="Loại hình"
-            dataIndex="provider_type"
-            key="provider_type"
-          />
+          <Column title="Mã xe" dataIndex="banner_id" key="banner_id" />
 
           <Column
-            title="API nhà cung cấp"
-            dataIndex="api_endpoint"
-            key="api_endpoint"
+            title="Tuyến"
+            dataIndex="banner_url "
+            key="banner_url "
           />
-
-          <Column
-            title="Ngày tạo"
-            dataIndex="created_at"
-            key="created_at"
-            render={(value) => formatISO(value)}
-          />
+          <Column title="Doanh thu" dataIndex="descriptions" key="descriptions" />
+          <Column title="Đánh giá" dataIndex="descriptions" key="descriptions" />
+          <Column title="Tỉ lệ hủy" dataIndex="descriptions" key="descriptions" />
         </Table>
       </div>
-      <>
-        <ModalPayment
-          open={isOpen}
-          onOk={handleOK}
-          onCancel={handleCancel}
-        ></ModalPayment>
-      </>
+     
     </div>
   );
 }

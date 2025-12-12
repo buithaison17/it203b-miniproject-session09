@@ -21,10 +21,9 @@ import {
   addStationThunk,
   updateStationThunk,
   deleteStationThunk,
-} from "../../../stores/stationSlice";
-import type { Station } from "../../../interfaces/Station"; // Tái sử dụng
-import StationModal from "../../components/Modals/Stations/StationModal"; // Component Modal đã hoàn thiện
-
+} from "../../../apis/station.api";
+import type { Station } from "../../../interfaces/Station";
+import StationModal from "../../components/Modals/Stations/StationModal";
 import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
@@ -59,8 +58,7 @@ export default function StationManager() {
   const [editingStation, setEditingStation] = useState<Station | null>(null);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [sortType, setSortType] = useState<string>("date_desc");
-  const [filterLocation, setFilterLocation] = useState<string>("");
+  const [sortType, setSortType] = useState<string>("id_desc");
 
   // LOGIC LẤY DỮ LIỆU BAN ĐẦU
   useEffect(() => {
@@ -80,23 +78,31 @@ export default function StationManager() {
       );
     }
 
-    // Lọc theo Địa điểm
-    if (filterLocation) {
-      result = result.filter((s) => s.location.includes(filterLocation));
-    }
-
     // Sắp xếp
-    if (sortType === "name_asc") {
-      result.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortType === "updated_desc") {
+      result.sort(
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
     } else if (sortType === "date_desc") {
       result.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+    } else if (sortType === "id_desc") {
+      // Sắp xếp theo ID giảm dần
+      result.sort((a, b) => {
+        // Lấy phần số của ID
+        const numA = parseInt(a.id.replace("BX", ""));
+        const numB = parseInt(b.id.replace("BX", ""));
+
+        // Sắp xếp giảm dần: b - a
+        return numB - numA;
+      });
     }
 
     return result;
-  }, [stations, searchTerm, sortType, filterLocation]);
+  }, [stations, searchTerm, sortType]);
 
   const generateNewStationId = () => {
     const bxIds = stations
@@ -116,7 +122,7 @@ export default function StationManager() {
   // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
   const handleAdd = () => {
     const now = new Date().toISOString();
-    const newId = generateNewStationId(); // Vẫn tạo ID chuẩn ở Frontend
+    const newId = generateNewStationId();
 
     // Gán dữ liệu cơ sở cho Modal
     setEditingStation({
@@ -131,13 +137,13 @@ export default function StationManager() {
       updated_at: now,
     } as any);
 
-    setIsEditingMode(false); // <--- QUAN TRỌNG: Đặt chế độ THÊM MỚI (FALSE)
+    setIsEditingMode(false);
     setIsModalVisible(true);
   };
 
   const handleEdit = (station: Station) => {
-    setEditingStation(station); // Chế độ sửa
-    setIsEditingMode(true); // <--- QUAN TRỌNG: Đặt chế độ SỬA (TRUE)
+    setEditingStation(station);
+    setIsEditingMode(true);
     setIsModalVisible(true);
   };
 
@@ -169,7 +175,7 @@ export default function StationManager() {
       return;
     }
 
-    // Chuẩn bị dữ liệu để xuất file (chỉ lấy các trường cần thiết)
+    // Chuẩn bị dữ liệu để xuất file
     const exportData = filteredAndSortedStations.map((s) => ({
       ID: s.id,
       "Tên Bến Xe": s.name,
@@ -182,7 +188,6 @@ export default function StationManager() {
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
 
-    // Thiết lập độ rộng cột (Tùy chọn)
     worksheet["!cols"] = Object.keys(exportData[0]).map(() => ({ wch: 25 }));
 
     const workbook = XLSX.utils.book_new();
@@ -202,7 +207,7 @@ export default function StationManager() {
 
   return (
     <div>
-      <div className="header-page flex flex-col gap-3 p-4">
+      <div className="header-page flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <img src={home} alt="" />
           <img src={hide} className="rotate-90" alt="" />
@@ -211,24 +216,32 @@ export default function StationManager() {
         {/* Tên trang và đăng xuất */}
         <div className="flex justify-between pt-2">
           <div className="text-4xl">Danh sách bến xe</div>
-          <div>
-            <p>Admin</p>
-            <div className="flex items-center ">
-              <p className="text-rose-600 ">Đăng xuất</p>
-              <img className="text-rose-600" src={logout} alt="" />
+          <div className="flex items-center gap-4 p-2 bg-white rounded-lg shadow-sm">
+            {/* Avatar */}
+            <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold text-lg">
+              A
+            </div>
+
+            {/* Thông tin người dùng */}
+            <div className="flex flex-col">
+              <span className="font-semibold text-gray-800">Admin</span>
+              <div className="flex items-center gap-1 text-rose-600 cursor-pointer hover:underline">
+                <span>Đăng xuất</span>
+                <img className="w-8 h-8" src={logout} alt="Logout" />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* 3. KHU VỰC HÀNH ĐỘNG (CHIA 2 BÊN) */}
-        <div className="flex gap-4 justify-between mt-4">
+        {/* {Các chức năng} */}
+        <div className="flex gap-4 justify-between">
           {/* BÊN TRÁI: THÊM */}
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             Thêm Bến Xe
           </Button>
 
-          {/* BÊN PHẢI: XUẤT, LỌC, TÌM KIẾM */}
-          <div className="flex items-center gap-4">
+          {/* BÊN PHẢI: XUẤT, TÌM KIẾM */}
+          <div className="flex gap-4">
             {/* Xuất file */}
             <div
               onClick={handleExportExcel}
@@ -244,25 +257,15 @@ export default function StationManager() {
               onChange={(e) => setSortType(e.target.value)}
               value={sortType}
             >
+              <option value="id_desc">ID Bến Xe (Mới nhất)</option>
               <option value="date_desc">Ngày tạo (Mới nhất)</option>
-              <option value="name_asc">Tên (A-Z)</option>
-            </select>
-
-            {/* Select Lọc */}
-            <select
-              className="rounded-md border-2 border-gray-400 px-3 h-10 text-sm"
-              onChange={(e) => setFilterLocation(e.target.value)}
-              value={filterLocation}
-            >
-              <option value="">Bộ lọc (Địa điểm)</option>
-              <option value="Hà Nội">Hà Nội</option>
-              <option value="TP.HCM">TP.HCM</option>
+              <option value="update_desc">Ngày cập nhật (Mới nhất)</option>
             </select>
 
             {/* Input Tìm kiếm */}
             <Input
               prefix={<SearchOutlined />}
-              placeholder="Tìm kiếm theo Tên/Địa chỉ..."
+              placeholder="Tìm kiếm theo Tên/Địa chỉ"
               style={{ width: 250 }}
               size="large"
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -274,7 +277,7 @@ export default function StationManager() {
 
       {/* --- BẢNG BẾN XE --- */}
       <Table<Station>
-        loading={loading} // Hiển thị loading khi đang fetch data
+        loading={loading}
         pagination={{ pageSize: 5 }}
         dataSource={filteredAndSortedStations}
         rowKey="id"
@@ -286,6 +289,18 @@ export default function StationManager() {
         <Column title="Số ĐT" dataIndex="phone" key="phone" width={100} />
         <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
         <Column
+          title="Ngày Tạo"
+          dataIndex="created_at"
+          key="created_at"
+          render={(dateString: string) => formatDateTime(dateString)}
+        />
+        <Column
+          title="Ngày Cập Nhật"
+          dataIndex="updated_at"
+          key="updated_at"
+          render={(dateString: string) => formatDateTime(dateString)}
+        />
+        <Column
           title="Action"
           key="action"
           width={100}
@@ -295,7 +310,7 @@ export default function StationManager() {
                 <Button
                   icon={<EditOutlined />}
                   type="link"
-                  onClick={() => handleEdit(record)} // Mở Modal Sửa
+                  onClick={() => handleEdit(record)}
                 />
               </Tooltip>
               <Popconfirm

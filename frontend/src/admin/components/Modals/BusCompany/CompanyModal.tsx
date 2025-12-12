@@ -1,59 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Button, Row, Col, message } from "antd";
-import type { Station } from "../../../../interfaces/Station";
+import type { BusCompany } from "../../../../interfaces/Bus"; 
 
-interface StationFormData {
+interface CompanyFormData {
   name: string;
-  location: string;
-  descriptions: string;
   phone: string;
-  image: File | string | null;
-  wallpaper: File | string | null;
+  descriptions: string;
+  image: File | string | null; 
+  license: File | string | null;
 }
 
-interface StationFormModalProps {
+interface CompanyFormModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (data: Station) => void; 
-  initialData?: Station | null; 
+  onSave: (data: BusCompany) => void; 
+  initialData?: BusCompany | null;     
   isEditModeProp: boolean;
 }
 
 const CLOUDINARY_CLOUD_NAME = "dcccifk4l";
 const CLOUDINARY_UPLOAD_PRESET = "ImgOJT";
 
-const StationFormModal: React.FC<StationFormModalProps> = ({
+const BusCompanyModal: React.FC<CompanyFormModalProps> = ({
   visible,
   onClose,
   onSave,
   initialData,
-  isEditModeProp
+  isEditModeProp,
 }) => {
-  const [form] = Form.useForm<StationFormData>();
+  const [form] = Form.useForm<CompanyFormData>();
   const [loading, setLoading] = useState(false);
 
-  // State để quản lý dữ liệu form
-  const [formData, setFormData] = useState<StationFormData>({
-    name: "",
-    location: "",
-    descriptions: "",
-    phone: "",
-    image: null,
-    wallpaper: null,
+  // State để quản lý dữ liệu form 
+  const [formData, setFormData] = useState<CompanyFormData>({
+    name: "", phone: "", descriptions: "", image: null, license: null,
   });
 
-  // State quản lý ảnh preview
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [wallpaperPreview, setWallpaperPreview] = useState<string | null>(null);
+  const [licensePreview, setLicensePreview] = useState<string | null>(null);
 
   // Xử lý chế độ Thêm/Sửa khi Modal mở
   useEffect(() => {
     if (!visible) {
-        // RESET SẠCH state khi đóng Modal
         form.resetFields();
-        setFormData({ name: "", location: "", descriptions: "", phone: "", image: null, wallpaper: null });
+        setFormData({ name: "", phone: "", descriptions: "", image: null, license: null });
         setImagePreview(null);
-        setWallpaperPreview(null);
+        setLicensePreview(null);
         return;
     }
 
@@ -63,29 +55,28 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
       // 1. Điền giá trị TEXT vào form của Antd
       form.setFieldsValue({
         name: initialData.name,
-        location: initialData.location,
-        descriptions: initialData.descriptions,
         phone: initialData.phone,
+        descriptions: initialData.descriptions,
       });
       
-      // 2. Cập nhật state formData và Preview cho ảnh (URL cũ)
+      // 2. Cập nhật state formData và Preview cho ảnh
       setFormData(prev => ({
           ...prev, 
           image: initialData.image, 
-          wallpaper: initialData.wallpaper,
+          license: initialData.license,
       }));
       setImagePreview(initialData.image);
-      setWallpaperPreview(initialData.wallpaper);
+      setLicensePreview(initialData.license);
       
     } else {
       // CHẾ ĐỘ THÊM: Reset
       form.resetFields();
       setImagePreview(null);
-      setWallpaperPreview(null);
+      setLicensePreview(null);
     }
   }, [visible, initialData, form]);
 
-  // HÀM XỬ LÝ UPLOAD LÊN CLOUDINARY
+  // HÀM XỬ LÝ UPLOAD LÊN CLOUDINARY 
   const uploadImageToCloudinary = async (file: File) => {
     const data = new FormData();
     data.append("file", file);
@@ -94,10 +85,7 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
     try {
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: data,
-        }
+        { method: "POST", body: data }
       );
       const json = await res.json();
       if (!json?.secure_url) throw new Error("Upload failed");
@@ -108,10 +96,10 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
     }
   };
 
-  // Xử lý thay đổi Input File
+  // Xử lý thay đổi Input File 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldName: "image" | "wallpaper"
+    fieldName: "image" | "license"
   ) => {
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
@@ -122,20 +110,17 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
     if (fieldName === "image") {
       setImagePreview(previewUrl);
     } else {
-      setWallpaperPreview(previewUrl);
+      setLicensePreview(previewUrl);
     }
-    // Xóa các file cũ trong form item
     form.setFieldsValue({ [fieldName as string]: null as any });
   };
 
   // Hàm XỬ LÝ LƯU
   const handleFormSubmit = async (values: any) => {
-    // Lấy thời điểm hiện tại
-    const now = new Date();
+const now = new Date();
 
     // Lấy dữ liệu text đã trim từ 'values'
     const name = values.name.trim();
-    const location = values.location.trim();
     const phone = values.phone.trim();
     const descriptions = values.descriptions.trim();
 
@@ -143,50 +128,46 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
 
     try {
       let imageUrl: string | null = null;
-      let wallpaperUrl: string | null = null;
+      let licenseUrl: string | null = null;
 
-      // 1. Xử lý Ảnh Chính (Lấy từ formData state)
+      // 1. Xử lý Ảnh Chính
       if (formData.image instanceof File) {
-        message.loading("Đang tải ảnh chính", 0);
+        message.loading("Đang tải hình ảnh", 0);
         imageUrl = await uploadImageToCloudinary(formData.image);
       } else if (typeof formData.image === "string") {
-        imageUrl = formData.image; // Giữ nguyên URL cũ
+        imageUrl = formData.image;
       }
 
-      // 2. Xử lý Hình Nền (Lấy từ formData state)
-      if (formData.wallpaper instanceof File) {
-        message.loading("Đang tải hình nền", 0);
-        wallpaperUrl = await uploadImageToCloudinary(formData.wallpaper);
-      } else if (typeof formData.wallpaper === "string") {
-        wallpaperUrl = formData.wallpaper; // Giữ nguyên URL cũ
+      // 1. Xử lý Giấy Phép
+      if (formData.license instanceof File) {
+        message.loading("Đang tải giấy phép", 0);
+        licenseUrl = await uploadImageToCloudinary(formData.license);
+      } else if (typeof formData.license === "string") {
+        licenseUrl = formData.license;
       }
       message.destroy();
 
-      // 3. Kiểm tra URL (Nếu là chế độ Sửa, URL null chỉ xảy ra khi xóa ảnh cũ)
-      if (!imageUrl || !wallpaperUrl) {
+      if (!imageUrl || !licenseUrl) {
         throw new Error("Tải ảnh thất bại hoặc thiếu URL.");
       }
 
-      // 4. Chuẩn bị Dữ liệu cuối cùng
-      const finalData: Station = {
-        ...(initialData?.id ? { id: initialData.id } : {}), // chỉ thêm id khi sửa
+      // 3. Chuẩn bị Dữ liệu cuối cùng 
+      const finalData: BusCompany = {
+        ...(initialData?.id ? { id: initialData.id } : {}),
         name,
-        location,
-        descriptions,
         phone,
+        descriptions,
         image: imageUrl,
-        wallpaper: wallpaperUrl,
+        license: licenseUrl,
         created_at: initialData?.created_at || now.toISOString(),
         updated_at: now.toISOString(),
       };
 
-      // 5. Gọi hàm lưu (API/Redux)
+      // 4. Gọi hàm lưu (API/Redux)
       onSave(finalData);
 
       message.success(
-        initialData
-          ? "Cập nhật bến xe thành công"
-          : "Thêm bến xe mới thành công"
+        isEditMode ? "Cập nhật nhà xe thành công" : "Thêm nhà xe mới thành công"
       );
       onClose();
     } catch (err: any) {
@@ -200,7 +181,7 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
 
   return (
     <Modal
-      title={isEditMode ? "Sửa Bến Xe" : "Thêm Bến Xe"}
+      title={isEditMode ? "Sửa Nhà Xe" : "Thêm Nhà Xe"} 
       open={visible}
       onCancel={onClose}
       footer={null}
@@ -211,57 +192,34 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
         form={form}
         layout="vertical"
         onFinish={handleFormSubmit}
-        // Antd Form sẽ chạy validation và gọi onFinish() nếu hợp lệ
       >
         {/* Dữ liệu Form Text */}
         <Row gutter={16}>
+          {/* Tên Nhà Xe */}
           <Col span={12}>
-            <Form.Item
-              name="name"
-              label="Tên Bến Xe"
-              rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
-            >
-              <Input placeholder="Ví dụ: Bến Xe Giáp Bát" disabled={loading} />
+            <Form.Item name="name" label="Tên Nhà Xe" rules={[{ required: true, message: "Vui lòng nhập tên!" }]}>
+              <Input placeholder="Ví dụ: Phương Trang" disabled={loading}  />
             </Form.Item>
           </Col>
+          
+          {/* Số Điện Thoại */}
           <Col span={12}>
-            <Form.Item
-              name="location"
-              label="Địa Chỉ"
-              rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
-            >
-              <Input
-                placeholder="Ví dụ: Giải Phóng, Hoàng Mai"
-                disabled={loading}
-              />
+            <Form.Item name="phone" label="Số Điện Thoại" rules={[{ required: true, message: "Vui lòng nhập SĐT!" }]}>
+              <Input placeholder="Ví dụ: 0901234567" disabled={loading}  />
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item
-              name="phone"
-              label="Số Điện Thoại"
-              rules={[{ required: true, message: "Vui lòng nhập SĐT!" }]}
-            >
-              <Input placeholder="Ví dụ: 0901234567" disabled={loading} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="descriptions"
-              label="Mô Tả"
-              rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
-            >
-              <Input.TextArea
-                rows={1}
-                placeholder="Mô tả ngắn về bến xe..."
-                disabled={loading}
-              />
+          
+          {/* Mô Tả */}
+          <Col span={24}>
+            <Form.Item name="descriptions" label="Mô Tả" rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}>
+              <Input.TextArea rows={1} placeholder="Mô tả ngắn về nhà xe..." disabled={loading} />
             </Form.Item>
           </Col>
         </Row>
 
         {/* Dữ liệu Form File */}
         <Row gutter={16} className="mt-4">
+          {/* Ảnh Chính */}
           <Col span={12}>
             <Form.Item label="Ảnh Chính">
               <Input
@@ -270,7 +228,6 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
                 onChange={(e) => handleFileChange(e, "image")}
                 disabled={loading}
               />
-
               {imagePreview && (
                 <div className="mt-2">
                   <p className="text-sm text-gray-500 m-0">Ảnh hiện tại:</p>
@@ -291,22 +248,21 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Hình Nền">
+            <Form.Item label="Giấy Phép">
               <Input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleFileChange(e, "wallpaper")}
+                onChange={(e) => handleFileChange(e, "license")}
                 disabled={loading}
               />
-
-              {wallpaperPreview && (
+              {licensePreview && (
                 <div className="mt-2">
                   <p className="text-sm text-gray-500 m-0">
                     Hình nền hiện tại:
                   </p>
 
                   <img
-                    src={wallpaperPreview}
+                    src={licensePreview}
                     alt="Preview"
                     style={{
                       width: "100%",
@@ -322,7 +278,6 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
         </Row>
 
         {/* Footer (Nút Lưu) */}
-
         <Form.Item className="mt-8">
           <Button
             type="primary"
@@ -339,4 +294,4 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
   );
 };
 
-export default StationFormModal;
+export default BusCompanyModal;
