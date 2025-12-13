@@ -10,7 +10,6 @@ export interface BusCompany {
 }
 
 export interface Bus {
-  name: string;
   id: string;
   company_id: string;
   bus_name: string;

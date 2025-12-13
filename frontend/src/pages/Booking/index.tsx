@@ -8,7 +8,6 @@ import { db } from "./mockData";
 import { find } from "../../utils/find";
 import Search from "../../components/Search";
 import { useAppDispatch, useAppSelector } from "../../hooks/CustomHook";
-import { featBus } from "../../apis/buses.api";
 import { featSchedule } from "../../apis/schedule.api";
 import { featRoutes } from "../../apis/routes.api";
 import { filterScheduleData, setRoutesId } from "../../stores/searchSlice";
@@ -32,7 +31,7 @@ export default function BookingScreen() {
 
   //fetch data
   const fetchData = async () => {
-    await dispatch(featBus());
+    // await dispatch(fetchBusesThunk());
     await dispatch(featSchedule());
     // dispatch ghế
     await dispatch(featRoutes());
@@ -50,7 +49,7 @@ export default function BookingScreen() {
   useEffect(() => {
     if (routesStatus === "fulfilled" && schedulesStatus === "fulfilled") {
       setRoutesData(routes);
-      setBusesData(buses);
+      setBusesData(db.buses);
       setScheduleData(schedules);
       setSeatsData(db.seats);
     }
@@ -179,11 +178,13 @@ export default function BookingScreen() {
               )}
               {searchReducer.schedulesFilter.map((element, index) => {
                 const busElement = find.byKey(busesData, "id", element.bus_id);
+
                 const routesElement = find.byKey(
                   routesData,
                   "id",
                   element.route_id
                 );
+
                 if (busElement && routesElement) {
                   const seatsFilter = seatsData.filter(
                     (item: Seat) => item.bus_id === busElement.id
