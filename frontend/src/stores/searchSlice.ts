@@ -61,9 +61,6 @@ const searchSlice = createSlice({
       state.schedulesFilter = scheduleData.filter(
         (element) => element.route_id === routesId
       );
-      console.log("filter schedules : ", state.schedulesFilter);
-
-      console.log("lenght : ", state.schedulesFilter.length);
     },
   },
 });
