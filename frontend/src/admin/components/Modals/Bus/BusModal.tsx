@@ -118,7 +118,7 @@ const BusModal: React.FC<BusFormModalProps> = ({
 
 
     // Hàm XỬ LÝ LƯU CHÍNH
-    const handleFormSubmit = async (values: any) => {
+    const handleFormSubmit = async (values: Bus) => {
         setLoading(true);
 
         // 1. Phân loại ảnh: File mới (cần upload) và BusImage cũ (cần giữ/xóa)
@@ -162,7 +162,7 @@ const BusModal: React.FC<BusFormModalProps> = ({
                 company_id: values.company_id.trim(),
                 license_plate: values.license_plate.trim(),
                 descriptions: values.descriptions.trim(),
-                seat_count: parseInt(values.seat_count),
+                capacity: values.capacity,
 
                 created_at: initialData?.created_at || now.toISOString(),
                 updated_at: now.toISOString(),
@@ -173,9 +173,14 @@ const BusModal: React.FC<BusFormModalProps> = ({
 
             message.success(isEditModeProp ? "Hoàn tất xử lý dữ liệu." : "Hoàn tất xử lý dữ liệu.");
             onClose();
-        } catch (err: any) {
-            message.error(err.message || "Lỗi khi lưu dữ liệu hoặc tải ảnh lên.");
-        } finally {
+        } catch (error: unknown) {
+      // Khai báo là unknown
+      let errorMessage = "Lỗi khi lưu dữ liệu.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage);
+    } finally {
             setLoading(false);
         }
     };
@@ -200,7 +205,7 @@ const BusModal: React.FC<BusFormModalProps> = ({
                 </Row>
                 <Row gutter={16}>
                     <Col span={8}><Form.Item name="license_plate" label="Biển Số Xe" rules={[{ required: true, message: "Vui lòng nhập Biển Số Xe!" }]}><Input disabled={loading} /></Form.Item></Col>
-                    <Col span={8}><Form.Item name="seat_count" label="Số Ghế" rules={[{ required: true, message: "Vui lòng nhập Số Ghế!" }]}><Input type="number" disabled={loading} /></Form.Item></Col>
+                    <Col span={8}><Form.Item name="capacity" label="Số Ghế" rules={[{ required: true, message: "Vui lòng nhập Số Ghế!" }]}><Input type="number" disabled={loading} /></Form.Item></Col>
                     <Col span={8}><Form.Item name="descriptions" label="Mô Tả" rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}><Input.TextArea rows={1} disabled={loading} /></Form.Item></Col>
                 </Row>
 

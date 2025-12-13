@@ -18,6 +18,12 @@ interface CompanyFormModalProps {
   isEditModeProp: boolean;
 }
 
+interface BusCompanyFormValues {
+    name: string;
+    phone: string;
+    descriptions: string;
+}
+
 const CLOUDINARY_CLOUD_NAME = "dcccifk4l";
 const CLOUDINARY_UPLOAD_PRESET = "ImgOJT";
 
@@ -112,11 +118,11 @@ const BusCompanyModal: React.FC<CompanyFormModalProps> = ({
     } else {
       setLicensePreview(previewUrl);
     }
-    form.setFieldsValue({ [fieldName as string]: null as any });
+    form.setFieldsValue({ [fieldName as string]: null as unknown });
   };
 
   // Hàm XỬ LÝ LƯU
-  const handleFormSubmit = async (values: any) => {
+  const handleFormSubmit = async (values: BusCompanyFormValues) => {
 const now = new Date();
 
     // Lấy dữ liệu text đã trim từ 'values'
@@ -153,7 +159,7 @@ const now = new Date();
 
       // 3. Chuẩn bị Dữ liệu cuối cùng 
       const finalData: BusCompany = {
-        ...(initialData?.id ? { id: initialData.id } : {}),
+        id: initialData?.id || Date.now().toString(),
         name,
         phone,
         descriptions,
@@ -170,9 +176,14 @@ const now = new Date();
         isEditMode ? "Cập nhật nhà xe thành công" : "Thêm nhà xe mới thành công"
       );
       onClose();
-    } catch (err: any) {
-      message.error(err.message || "Lỗi khi lưu dữ liệu.");
-    } finally {
+    } catch (error: unknown) {
+          // Khai báo là unknown
+          let errorMessage = "Lỗi khi lưu dữ liệu.";
+          if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+          console.error(errorMessage);
+        } finally {
       setLoading(false);
     }
   };

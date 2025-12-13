@@ -16,7 +16,6 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-import { useAppSelector, useAppDispatch } from "../../../hooks/CustomHook";
 import {
   fetchStationsThunk,
   addStationThunk,
@@ -29,10 +28,11 @@ import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
+import { useAppDispatch, useAppSelector } from "../../../hooks/CustomHook";
 
 const { Column } = Table;
 
-const formatDateTime = (dateString: string): string => {
+const formatDateTime = (dateString: string | Date): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "N/A"; // Xử lý trường hợp ngày không hợp lệ
@@ -43,6 +43,7 @@ const formatDateTime = (dateString: string): string => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return "N/A";
   }
@@ -135,7 +136,7 @@ export default function StationManager() {
       wallpaper: null,
       created_at: now,
       updated_at: now,
-    } as any);
+    } as Station);
 
     setIsEditingMode(false);
     setIsModalVisible(true);

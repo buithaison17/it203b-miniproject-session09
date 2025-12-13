@@ -16,7 +16,7 @@ const initialState: StationState = {
 };
 
 // Hàm chuẩn bị dữ liệu 
-const prepareData = (station: any) => ({
+const prepareData = (station: Station) => ({
     ...station,
     // Đảm bảo là string ISO, nếu input là Date object thì dùng toISOString()
     created_at: typeof station.created_at === 'string' ? station.created_at : station.created_at.toISOString(),
@@ -104,9 +104,9 @@ const StationSlice = createSlice({
                 state.loading = false;
             })
             // Xử lý lỗi chung
-            .addMatcher((action) => action.type.endsWith('/rejected'), (state, action) => {
+            .addMatcher((action) => action.type.endsWith('/rejected'), (state) => {
                 state.loading = false;
-                state.error = action.error.message || 'Có lỗi xảy ra.';
+                state.error = 'Có lỗi xảy ra.';
             });
     }
 });

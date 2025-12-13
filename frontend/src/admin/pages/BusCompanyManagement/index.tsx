@@ -18,12 +18,12 @@ import * as XLSX from "xlsx";
 
 import { useAppSelector, useAppDispatch } from "../../../hooks/CustomHook";
 import {
-  fetchBusCompanyThunk, 
-  addBusCompanyThunk,     
-  updateBusCompanyThunk,  
-  deleteBusCompanyThunk,  
-} from "../../../apis/busCompany.api"; 
-import type { BusCompany } from "../../../interfaces/Bus"; 
+  fetchBusCompanyThunk,
+  addBusCompanyThunk,
+  updateBusCompanyThunk,
+  deleteBusCompanyThunk,
+} from "../../../apis/busCompany.api";
+import type { BusCompany } from "../../../interfaces/Bus";
 import BusCompanyModal from "../../components/Modals/BusCompany/CompanyModal";
 
 import home from "../../../assets/icons/home-icon.png";
@@ -31,56 +31,58 @@ import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
 
-
 const { Column } = Table;
 
-// Hàm format ngày tháng 
-const formatDateTime = (dateString: string): string => {
+// Hàm format ngày tháng
+const formatDateTime = (dateString: string | Date): string => {
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "N/A";
-    return date.toLocaleString('vi-VN', {
-      day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    return date.toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return "N/A";
   }
 };
 
-
 export default function BusCompanyManager() {
   const dispatch = useAppDispatch();
   const { busCompany, loading, error } = useAppSelector(
-    (state) => state.busCompany 
+    (state) => state.busCompany
   );
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<BusCompany | null>(null); 
+  const [editingCompany, setEditingCompany] = useState<BusCompany | null>(null);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortType, setSortType] = useState<string>("id_desc");
 
   // LOGIC LẤY DỮ LIỆU BAN ĐẦU
   useEffect(() => {
-    dispatch(fetchBusCompanyThunk()); 
+    dispatch(fetchBusCompanyThunk());
     if (error) message.error(error);
   }, [dispatch, error]);
 
   // --- HÀM TẠO ID CHUẨN ---
   const generateNewCompanyId = () => {
     const nxIds = busCompany
-      .map(c => c.id)
-      .filter(id => id.startsWith('NX')) 
-      .map(id => parseInt(id.replace('NX', ''))) 
-      .filter(num => !isNaN(num)); 
+      .map((c) => c.id)
+      .filter((id) => id.startsWith("NX"))
+      .map((id) => parseInt(id.replace("NX", "")))
+      .filter((num) => !isNaN(num));
 
     const maxNum = nxIds.length > 0 ? Math.max(...nxIds) : 0;
     const newIdNum = maxNum + 1;
-    const paddedNum = String(newIdNum).padStart(3, '0');
-    
+    const paddedNum = String(newIdNum).padStart(3, "0");
+
     return `NX${paddedNum}`;
   };
-
 
   // --- LOGIC LỌC, TÌM KIẾM, SẮP XẾP ---
   const filteredAndSortedCompanies = useMemo(() => {
@@ -96,38 +98,36 @@ export default function BusCompanyManager() {
       );
     }
 
-
     // 2. Sắp xếp
-    if (sortType === "updated_desc") { 
-    result.sort(
+    if (sortType === "updated_desc") {
+      result.sort(
         (a, b) =>
-            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-    );
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
     } else if (sortType === "date_desc") {
       result.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
-    } else if (sortType === "id_desc") { 
+    } else if (sortType === "id_desc") {
       result.sort((a, b) => {
-        const numA = parseInt(a.id.replace('NX', '')); 
-        const numB = parseInt(b.id.replace('NX', '')); 
+        const numA = parseInt(a.id.replace("NX", ""));
+        const numB = parseInt(b.id.replace("NX", ""));
         return numB - numA;
       });
     }
 
     return result;
-  }, [busCompany, searchTerm, sortType]); 
-
+  }, [busCompany, searchTerm, sortType]);
 
   // --- HÀM XỬ LÝ HÀNH ĐỘNG ---
-  
-  const handleSave = (companyData: BusCompany) => { 
-    if (isEditingMode) { 
-      dispatch(updateBusCompanyThunk(companyData)); 
+
+  const handleSave = (companyData: BusCompany) => {
+    if (isEditingMode) {
+      dispatch(updateBusCompanyThunk(companyData));
       message.success("Đang cập nhật nhà xe...");
     } else {
-      dispatch(addBusCompanyThunk(companyData));   
+      dispatch(addBusCompanyThunk(companyData));
       message.success("Đang thêm nhà xe...");
     }
     setIsModalVisible(false);
@@ -136,46 +136,48 @@ export default function BusCompanyManager() {
 
   const handleAdd = () => {
     const now = new Date().toISOString();
-    const newId = generateNewCompanyId(); 
-    
-    setEditingCompany({ 
-      id: newId, 
-      name: '', image: '', descriptions: '', phone: '',
-      license: '', 
-      created_at: now, 
+    const newId = generateNewCompanyId();
+
+    setEditingCompany({
+      id: newId,
+      name: "",
+      image: "",
+      descriptions: "",
+      phone: "",
+      license: "",
+      created_at: now,
       updated_at: now,
-    } as any); 
-    
-    setIsEditingMode(false); 
+    } as BusCompany);
+
+    setIsEditingMode(false);
     setIsModalVisible(true);
   };
 
-  const handleEdit = (company: BusCompany) => { 
+  const handleEdit = (company: BusCompany) => {
     setEditingCompany(company);
-    setIsEditingMode(true); 
+    setIsEditingMode(true);
     setIsModalVisible(true);
   };
 
   const handleDelete = (id: string) => {
-    dispatch(deleteBusCompanyThunk(id)); 
+    dispatch(deleteBusCompanyThunk(id));
     message.loading("Đang xóa nhà xe...", 0.5);
   };
 
   const handleExportExcel = () => {
-    if (filteredAndSortedCompanies.length === 0) { 
-      message.warning('Không có dữ liệu để xuất file.');
+    if (filteredAndSortedCompanies.length === 0) {
+      message.warning("Không có dữ liệu để xuất file.");
       return;
     }
-    
-    // Chuẩn bị dữ liệu để xuất file 
-    const exportData = filteredAndSortedCompanies.map(c => ({
-        ID: c.id,
-        'Tên Nhà Xe': c.name,
-        'Mô Tả': c.descriptions,
-        'Số ĐT': c.phone,
-        'Giấy phép': c.license, 
-        'Ngày Tạo': formatDateTime(c.created_at),
-        'Ngày Cập Nhật': formatDateTime(c.updated_at),
+
+    // Chuẩn bị dữ liệu để xuất file
+    const exportData = filteredAndSortedCompanies.map((c) => ({
+      ID: c.id,
+      "Tên Nhà Xe": c.name,
+      "Mô Tả": c.descriptions,
+      "Số ĐT": c.phone,
+      "Ngày Tạo": formatDateTime(c.created_at),
+      "Ngày Cập Nhật": formatDateTime(c.updated_at),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -184,14 +186,16 @@ export default function BusCompanyManager() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Nha_Xe");
 
     try {
-        XLSX.writeFile(workbook, "Danh_sach_Nha_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx");
-        message.success('Đã xuất file Excel thành công!');
+      XLSX.writeFile(
+        workbook,
+        "Danh_sach_Nha_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
+      );
+      message.success("Đã xuất file Excel thành công!");
     } catch (e) {
-        message.error('Lỗi khi xuất file Excel.');
-        console.error(e);
+      message.error("Lỗi khi xuất file Excel.");
+      console.error(e);
     }
   };
-
 
   return (
     <div>
@@ -247,10 +251,8 @@ export default function BusCompanyManager() {
             >
               <option value="id_desc">ID Nhà Xe (Mới nhất)</option>
               <option value="date_desc">Ngày tạo (Mới nhất)</option>
-               <option value="update_desc">Ngày cập nhật (Mới nhất)</option>
+              <option value="update_desc">Ngày cập nhật (Mới nhất)</option>
             </select>
-
-            
 
             {/* Input Tìm kiếm */}
             <Input
@@ -269,7 +271,7 @@ export default function BusCompanyManager() {
       <Table<BusCompany>
         loading={loading}
         pagination={{ pageSize: 5 }}
-        dataSource={filteredAndSortedCompanies} 
+        dataSource={filteredAndSortedCompanies}
         rowKey="id"
         className="p-4"
       >
@@ -277,18 +279,18 @@ export default function BusCompanyManager() {
         <Column title="Tên Nhà Xe" dataIndex="name" key="name" />
         <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
         <Column title="Số ĐT" dataIndex="phone" key="phone" width={100} />
-        <Column 
-            title="Ngày Tạo" 
-            dataIndex="created_at" 
-            key="created_at"
-            render={(dateString: string) => formatDateTime(dateString)}
+        <Column
+          title="Ngày Tạo"
+          dataIndex="created_at"
+          key="created_at"
+          render={(dateString: string) => formatDateTime(dateString)}
         />
-        <Column 
-    title="Ngày Cập Nhật" 
-    dataIndex="updated_at" 
-    key="updated_at"
-    render={(dateString: string) => formatDateTime(dateString)}
-  />
+        <Column
+          title="Ngày Cập Nhật"
+          dataIndex="updated_at"
+          key="updated_at"
+          render={(dateString: string) => formatDateTime(dateString)}
+        />
         <Column
           title="Action"
           key="action"
@@ -299,7 +301,7 @@ export default function BusCompanyManager() {
                 <Button
                   icon={<EditOutlined />}
                   type="link"
-                  onClick={() => handleEdit(record)} 
+                  onClick={() => handleEdit(record)}
                 />
               </Tooltip>
               <Popconfirm
@@ -314,12 +316,12 @@ export default function BusCompanyManager() {
           )}
         />
       </Table>
-       {/* --- MODAL THÊM/SỬA --- */}
+      {/* --- MODAL THÊM/SỬA --- */}
       <BusCompanyModal // <-- Đã đổi tên Modal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSave}
-        initialData={editingCompany} 
+        initialData={editingCompany}
         isEditModeProp={isEditingMode}
       />
     </div>

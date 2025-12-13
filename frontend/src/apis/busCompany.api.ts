@@ -16,10 +16,16 @@ const initialState: BusCompanyState = {
 };
 
 // Hàm chuẩn bị dữ liệu (đảm bảo Date objects được chuyển thành chuỗi ISO string)
-const prepareData = (company: any) => ({
+const prepareData = (company: BusCompany) => ({
     ...company,
-    created_at: typeof company.created_at === 'string' ? company.created_at : company.created_at.toISOString(),
-    updated_at: typeof company.updated_at === 'string' ? company.updated_at : company.updated_at.toISOString(),
+    created_at: company.created_at instanceof Date 
+                ? company.created_at.toISOString() // Nếu là Date object, chuyển thành string
+                : company.created_at,             // Nếu đã là string, giữ nguyên
+
+    // Xử lý updated_at
+    updated_at: company.updated_at instanceof Date 
+                ? company.updated_at.toISOString() 
+                : company.updated_at,
 });
 
 // Lấy danh sách (READ)
@@ -103,9 +109,9 @@ const BusCompanySlice = createSlice({
                 state.loading = false;
             })
             // Xử lý lỗi chung
-            .addMatcher((action) => action.type.endsWith('/rejected'), (state, action) => {
+            .addMatcher((action) => action.type.endsWith('/rejected'), (state) => {
                 state.loading = false;
-                state.error = action.error.message || 'Lỗi xử lý nhà xe.';
+                state.error = 'Lỗi xử lý nhà xe.';
             });
     }
 });

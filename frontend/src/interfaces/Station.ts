@@ -6,8 +6,8 @@ export interface Station {
   phone: string;
   image: string | null; // URL của ảnh
   wallpaper: string | null; // URL của hình nền
-  created_at: string;
-  updated_at: string;
+  created_at: Date | string; 
+  updated_at: Date | string;
 }
 
 export interface BusStation {

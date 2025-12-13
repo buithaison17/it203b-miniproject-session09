@@ -14,8 +14,8 @@ interface StationFormData {
 interface StationFormModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (data: Station) => void; 
-  initialData?: Station | null; 
+  onSave: (data: Station) => void;
+  initialData?: Station | null;
   isEditModeProp: boolean;
 }
 
@@ -27,7 +27,7 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
   onClose,
   onSave,
   initialData,
-  isEditModeProp
+  isEditModeProp,
 }) => {
   const [form] = Form.useForm<StationFormData>();
   const [loading, setLoading] = useState(false);
@@ -49,17 +49,24 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
   // Xử lý chế độ Thêm/Sửa khi Modal mở
   useEffect(() => {
     if (!visible) {
-        // RESET SẠCH state khi đóng Modal
-        form.resetFields();
-        setFormData({ name: "", location: "", descriptions: "", phone: "", image: null, wallpaper: null });
-        setImagePreview(null);
-        setWallpaperPreview(null);
-        return;
+      // RESET SẠCH state khi đóng Modal
+      form.resetFields();
+      setFormData({
+        name: "",
+        location: "",
+        descriptions: "",
+        phone: "",
+        image: null,
+        wallpaper: null,
+      });
+      setImagePreview(null);
+      setWallpaperPreview(null);
+      return;
     }
 
     if (initialData) {
       // CHẾ ĐỘ SỬA: Điền dữ liệu và set preview URL cũ
-      
+
       // 1. Điền giá trị TEXT vào form của Antd
       form.setFieldsValue({
         name: initialData.name,
@@ -67,16 +74,15 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
         descriptions: initialData.descriptions,
         phone: initialData.phone,
       });
-      
+
       // 2. Cập nhật state formData và Preview cho ảnh (URL cũ)
-      setFormData(prev => ({
-          ...prev, 
-          image: initialData.image, 
-          wallpaper: initialData.wallpaper,
+      setFormData((prev) => ({
+        ...prev,
+        image: initialData.image,
+        wallpaper: initialData.wallpaper,
       }));
       setImagePreview(initialData.image);
       setWallpaperPreview(initialData.wallpaper);
-      
     } else {
       // CHẾ ĐỘ THÊM: Reset
       form.resetFields();
@@ -125,11 +131,11 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
       setWallpaperPreview(previewUrl);
     }
     // Xóa các file cũ trong form item
-    form.setFieldsValue({ [fieldName as string]: null as any });
+    form.setFieldsValue({ [fieldName as string]: null as unknown });
   };
 
   // Hàm XỬ LÝ LƯU
-  const handleFormSubmit = async (values: any) => {
+  const handleFormSubmit = async (values: StationFormData) => {
     // Lấy thời điểm hiện tại
     const now = new Date();
 
@@ -169,7 +175,7 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
 
       // 4. Chuẩn bị Dữ liệu cuối cùng
       const finalData: Station = {
-        ...(initialData?.id ? { id: initialData.id } : {}), // chỉ thêm id khi sửa
+        id: initialData?.id || Date.now().toString(),
         name,
         location,
         descriptions,
@@ -189,8 +195,13 @@ const StationFormModal: React.FC<StationFormModalProps> = ({
           : "Thêm bến xe mới thành công"
       );
       onClose();
-    } catch (err: any) {
-      message.error(err.message || "Lỗi khi lưu dữ liệu.");
+    } catch (error: unknown) {
+      // Khai báo là unknown
+      let errorMessage = "Lỗi khi lưu dữ liệu.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage);
     } finally {
       setLoading(false);
     }

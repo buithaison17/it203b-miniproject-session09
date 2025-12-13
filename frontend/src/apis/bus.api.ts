@@ -37,7 +37,7 @@ const generateNewImageId = (currentImages: BusImage[]): string => {
 };
 
 // Hàm chuẩn bị dữ liệu (đảm bảo Date objects được chuyển thành chuỗi ISO string)
-const prepareData = (data: any) => ({
+const prepareData = (data: Bus) => ({
     ...data,
     created_at: typeof data.created_at === 'string' ? data.created_at : data.created_at.toISOString(),
     updated_at: typeof data.updated_at === 'string' ? data.updated_at : data.updated_at.toISOString(),
@@ -238,9 +238,9 @@ const busSlice = createSlice({
                 state.loading = false;
             })
             // Xử lý lỗi chung
-            .addMatcher((action) => action.type.endsWith('/rejected'), (state, action) => {
+            .addMatcher((action) => action.type.endsWith('/rejected'), (state) => {
                 state.loading = false;
-                state.error = action.error.message || 'Lỗi xử lý xe.';
+                state.error =  'Lỗi xử lý xe.';
             });
     }
 });

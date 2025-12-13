@@ -5,10 +5,10 @@ export interface BusCompany {
   descriptions: string;
   phone: string;
   license: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: Date  | string;
+  updated_at: Date | string;
 }
- 
+
 export interface Bus {
   name: string;
   id: string;
@@ -17,10 +17,10 @@ export interface Bus {
   descriptions: string;
   license_plate: string;
   capacity: number;
-  created_at: Date;
-  updated_at: Date;
+  created_at: Date | string;
+  updated_at: Date | string;
 }
- 
+
 export interface BusImage {
   id: string;
   image_url: string;

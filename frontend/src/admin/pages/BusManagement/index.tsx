@@ -24,8 +24,14 @@ import home from "../../../assets/icons/home-icon.png";
 import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
-import { addBusThunk, deleteBusThunk, fetchBusesThunk, updateBusThunk, type CombinedBus } from "../../../apis/bus.api";
-import { log } from "console";
+
+import {
+  addBusThunk,
+  deleteBusThunk,
+  fetchBusesThunk,
+  updateBusThunk,
+  type CombinedBus,
+} from "../../../apis/bus.api";
 
 const { Column } = Table;
 
@@ -41,6 +47,7 @@ const formatDateTime = (dateString: string | Date): string => {
       hour: "2-digit",
       minute: "2-digit",
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return "N/A";
   }
@@ -56,11 +63,11 @@ export default function BusManager() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortType, setSortType] = useState<string>("id_desc");
 
-useEffect(() => {
+  useEffect(() => {
     dispatch(fetchBusesThunk());
     if (error) message.error(error);
   }, [dispatch, error]);
-  
+
   const filteredAndSortedBuses = useMemo(() => {
     let result = buses.slice();
 
@@ -95,88 +102,96 @@ useEffect(() => {
   }, [buses, searchTerm, sortType]);
 
   const generateNewBusId = () => {
-        const xIds = buses
-          .map((b) => b.id)
-          .filter((id) => id.startsWith("X"))
-          .map((id) => parseInt(id.replace("X", "")))
-          .filter((num) => !isNaN(num));
+    const xIds = buses
+      .map((b) => b.id)
+      .filter((id) => id.startsWith("X"))
+      .map((id) => parseInt(id.replace("X", "")))
+      .filter((num) => !isNaN(num));
 
-        const maxNum = xIds.length > 0 ? Math.max(...xIds) : 0;
-        const newIdNum = maxNum + 1;
+    const maxNum = xIds.length > 0 ? Math.max(...xIds) : 0;
+    const newIdNum = maxNum + 1;
 
-        return `X${String(newIdNum).padStart(3, "0")}`;
-    };    
+    return `X${String(newIdNum).padStart(3, "0")}`;
+  };
 
-  const handleSave = (busData: Bus, 
-        imagesToDelete: string[], 
-        _filesToUpload: File[],    
-        uploadedUrls: string[]) => {
-    
-      const finalPayload = {
-            bus: busData,
-            imagesToDelete: imagesToDelete,
-            imagesToAdd: uploadedUrls, // Dùng URL đã được upload từ Modal
-        };
+  const handleSave = (
+    busData: Bus,
+    imagesToDelete: string[],
+    _filesToUpload: File[],
+    uploadedUrls: string[]
+  ) => {
+    const finalPayload = {
+      bus: busData,
+      imagesToDelete: imagesToDelete,
+      imagesToAdd: uploadedUrls, // Dùng URL đã được upload từ Modal
+    };
 
-        if (isEditingMode) {
-            // Gọi UPDATE (Sửa xe + xử lý ảnh)
-            dispatch(updateBusThunk(finalPayload));
-        } else {
-            // Gọi ADD (Thêm xe + thêm ảnh)
-            const addPayload = {
-                bus: busData,
-                newImageUrls: uploadedUrls,
-            };
-            dispatch(addBusThunk(addPayload));
-        }
+    if (isEditingMode) {
+      // Gọi UPDATE (Sửa xe + xử lý ảnh)
+      dispatch(updateBusThunk(finalPayload));
+    } else {
+      // Gọi ADD (Thêm xe + thêm ảnh)
+      const addPayload = {
+        bus: busData,
+        newImageUrls: uploadedUrls,
+      };
+      dispatch(addBusThunk(addPayload));
+    }
 
-        message.success("Đang xử lý dữ liệu xe và hình ảnh...");
-        setIsModalVisible(false);
-        setEditingBus(null);
+    message.success("Đang xử lý dữ liệu xe và hình ảnh...");
+    setIsModalVisible(false);
+    setEditingBus(null);
   };
 
   const handleAdd = () => {
-        const now = new Date().toISOString();
-        const newId = generateNewBusId();
+    const now = new Date().toISOString();
+    const newId = generateNewBusId();
 
-        setEditingBus({
-          id: newId,
-          company_id: "", bus_name: "", descriptions: "", license_plate: "", capacity: 0,
-          images: [],
-          created_at: now.toString(), updated_at: now.toString(),
-        } as unknown as CombinedBus);
+    setEditingBus({
+      id: newId,
+      company_id: "",
+      bus_name: "",
+      descriptions: "",
+      license_plate: "",
+      capacity: 0,
+      images: [],
+      created_at: now.toString(),
+      updated_at: now.toString(),
+    } as unknown as CombinedBus);
 
-        setIsEditingMode(false);
-        setIsModalVisible(true);
-    };
+    setIsEditingMode(false);
+    setIsModalVisible(true);
+  };
 
-    const handleEdit = (bus: CombinedBus) => {
-        setEditingBus(bus);
-        setIsEditingMode(true);
-        setIsModalVisible(true);
-    };
+  const handleEdit = (bus: CombinedBus) => {
+    setEditingBus(bus);
+    setIsEditingMode(true);
+    setIsModalVisible(true);
+  };
 
-    const handleDelete = (id: string) => {
-        // Gọi DELETE thunk (sẽ xử lý cả ảnh liên quan)
-        dispatch(deleteBusThunk(id));
-        message.loading("Đang xóa xe...", 0.5);
-    };
+  const handleDelete = (id: string) => {
+    // Gọi DELETE thunk (sẽ xử lý cả ảnh liên quan)
+    dispatch(deleteBusThunk(id));
+    message.loading("Đang xóa xe...", 0.5);
+  };
 
   const handleExportExcel = () => {
     if (filteredAndSortedBuses.length === 0) {
-        message.warning("Không có dữ liệu xe để xuất file.");
-        return;
+      message.warning("Không có dữ liệu xe để xuất file.");
+      return;
     }
 
     const exportData = filteredAndSortedBuses.map((b) => ({
-        ID: b.id,
-        "ID Nhà Xe": b.company_id,
-        "Tên Xe": b.name,
-        "Biển Số": b.license_plate,
-        "Số Ghế": b.capacity,
-        "Mô Tả": b.descriptions,
-        "Ngày Tạo": formatDateTime(b.created_at),
-        "Ngày Cập Nhật": formatDateTime(b.updated_at),
+      ID: b.id,
+      "ID Nhà Xe": b.company_id,
+      "Tên Xe": b.name,
+      "Biển Số": b.license_plate,
+      "Số Ghế": b.capacity === null || b.capacity === undefined 
+                 ? '0' 
+                 : String(b.capacity),
+      "Mô Tả": b.descriptions,
+      "Ngày Tạo": formatDateTime(b.created_at),
+      "Ngày Cập Nhật": formatDateTime(b.updated_at),
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -187,16 +202,16 @@ useEffect(() => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Danh_sach_Xe");
 
     try {
-        XLSX.writeFile(
-            workbook,
-            "Danh_sach_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
-        );
-        message.success("Đã xuất file Excel thành công!");
+      XLSX.writeFile(
+        workbook,
+        "Danh_sach_Xe_" + new Date().toISOString().slice(0, 10) + ".xlsx"
+      );
+      message.success("Đã xuất file Excel thành công!");
     } catch (e) {
-        message.error("Lỗi khi xuất file Excel.");
-        console.error(e);
+      message.error("Lỗi khi xuất file Excel.");
+      console.error(e);
     }
-};
+  };
 
   return (
     <div>
@@ -273,21 +288,23 @@ useEffect(() => {
         pagination={{ pageSize: 5 }}
         dataSource={filteredAndSortedBuses}
         rowKey="id"
-        className="p-4" 
+        className="p-4"
       >
         <Column title="ID" dataIndex="id" key="id" width={80} />
         <Column title="ID Nhà Xe" dataIndex="company_id" key="company_id" />
         <Column title="Tên Xe" dataIndex="name" key="name" />
         <Column title="Mô Tả" dataIndex="descriptions" key="descriptions" />
         <Column title="Biển Số" dataIndex="license_plate" key="license_plate" />
-        <Column title="Số Ghế" dataIndex="capacity" key="capacity" />{" "}
+        <Column title="Số Ghế" dataIndex="capacity" key="capacity" />
         {/* Sửa dataIndex */}
-        <Column 
-                    title="Ảnh (Số lượng)" 
-                    key="image_count" 
-                    width={100}
-                    render={(_, record: CombinedBus) => <Tag color="blue">{record.images.length}</Tag>}
-                />
+        <Column
+          title="Ảnh (Số lượng)"
+          key="image_count"
+          width={100}
+          render={(_, record: CombinedBus) => (
+            <Tag color="blue">{record.images.length}</Tag>
+          )}
+        />
         <Column
           title="Ngày Cập Nhật"
           dataIndex="updated_at"

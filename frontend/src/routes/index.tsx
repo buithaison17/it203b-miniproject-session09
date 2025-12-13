@@ -23,6 +23,7 @@ import UserManager from "../admin/pages/AccountManagement";
 import SeatManager from "../admin/pages/SeatManagement";
 import RoutesManager from "../admin/pages/RoutesManagement";
 import SchedulesManager from "../admin/pages/SchedulesManagement";
+import BookingHistoryScreen from "../pages/BookingHistory/BookingHistory";
 
 export const routers = createBrowserRouter([
   {
@@ -44,7 +45,7 @@ export const routers = createBrowserRouter([
       },
       {
         path: "bus-company",
-        element: <BusCompany/>,
+        element: <BusCompany />,
       },
       {
         path: "station",
@@ -69,6 +70,10 @@ export const routers = createBrowserRouter([
       {
         path: "post:id",
         element: <PostScreen />,
+      },
+      {
+        path: "booking-history",
+        element: <BookingHistoryScreen />,
       },
     ],
   },
@@ -125,7 +130,7 @@ export const routers = createBrowserRouter([
       {
         path: "routes",
         element: <RoutesManager />,
-      }
+      },
     ],
   },
 ]);
