@@ -16,7 +16,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
-import { useAppSelector, useAppDispatch } from "../../../stores/store";
+import { useAppSelector, useAppDispatch } from "../../../hooks/CustomHook";
 import type { Bus } from "../../../interfaces/Bus";
 import BusModal from "../../components/Modals/Bus/BusModal";
 
@@ -25,6 +25,7 @@ import hide from "../../../assets/icons/icon_hide.png";
 import logout from "../../../assets/icons/Icon-out.png";
 import excel from "../../../assets/icons/excel-logo.png";
 import { addBusThunk, deleteBusThunk, fetchBusesThunk, updateBusThunk, type CombinedBus } from "../../../apis/bus.api";
+import { log } from "console";
 
 const { Column } = Table;
 
@@ -104,7 +105,7 @@ useEffect(() => {
         const newIdNum = maxNum + 1;
 
         return `X${String(newIdNum).padStart(3, "0")}`;
-    };
+    };    
 
   const handleSave = (busData: Bus, 
         imagesToDelete: string[], 
@@ -272,7 +273,7 @@ useEffect(() => {
         pagination={{ pageSize: 5 }}
         dataSource={filteredAndSortedBuses}
         rowKey="id"
-        className="p-4"
+        className="p-4" 
       >
         <Column title="ID" dataIndex="id" key="id" width={80} />
         <Column title="ID Nhà Xe" dataIndex="company_id" key="company_id" />

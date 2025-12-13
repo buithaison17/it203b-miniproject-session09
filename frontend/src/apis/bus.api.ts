@@ -11,12 +11,14 @@ export interface CombinedBus extends Bus {
 
 interface BusState {
     buses: CombinedBus[]; 
+    simpleBuses: Bus[];
     loading: boolean;
     error: string | null;
 }
 
 const initialState: BusState = {
     buses: [],
+    simpleBuses: [],
     loading: false,
     error: null,
 };
@@ -41,7 +43,18 @@ const prepareData = (data: any) => ({
     updated_at: typeof data.updated_at === 'string' ? data.updated_at : data.updated_at.toISOString(),
 });
 
-// Lấy danh sách
+// Lấy danh sách xe cơ bản (không có hình ảnh)
+export const fetchSimpleBusesThunk = createAsyncThunk(
+    'buses/fetchSimpleBuses', 
+    async () => {
+        const response = await fetch(API_URL_BUS);
+        if (!response.ok) throw new Error('Lỗi khi lấy dữ liệu xe cơ bản.');
+        // Chỉ trả về Bus[]
+        return await response.json() as Bus[]; 
+    }
+);
+
+// Lấy danh sách xe cùng hình ảnh
 export const fetchBusesThunk = createAsyncThunk(
     'buses/fetchBuses', 
     async () => {
@@ -199,6 +212,11 @@ const busSlice = createSlice({
             .addCase(fetchBusesThunk.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(fetchBusesThunk.fulfilled, (state, action) => {
                 state.buses = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchSimpleBusesThunk.pending, (state) => { state.loading = true; state.error = null; })
+            .addCase(fetchSimpleBusesThunk.fulfilled, (state, action) => {
+                state.simpleBuses = action.payload; // <-- Lưu vào state mới
                 state.loading = false;
             })
             // ADD (Create)

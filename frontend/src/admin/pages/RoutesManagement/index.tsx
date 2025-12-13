@@ -19,7 +19,7 @@ import * as XLSX from "xlsx";
 // Giả định imports từ Redux/API
 // import { useAppSelector, useAppDispatch } from "../../../stores/store";
 // import { fetchRoutesThunk, addRouteThunk, updateRouteThunk, deleteRouteThunk } from "../../../slices/routeSlice";
-import type { Route } from "../../../interfaces/Routes"; // <-- Interface mới
+import type { Routes } from "../../../interfaces/Routes"; // <-- Interface mới
 import RouteModal from "../../components/Modals/Route/RouteModal"; // <-- Modal mới
 
 // --- ICON IMPORTS ---
@@ -60,7 +60,7 @@ const formatDuration = (minutes: number): string => {
 };
 
 // --- DỮ LIỆU VÀ STATE MÔ PHỎNG ---
-const MOCK_ROUTES: Route[] = [
+const MOCK_ROUTES: Routes[] = [
   {
     routes_id: "RT001",
     departure_station_id: "BX001",

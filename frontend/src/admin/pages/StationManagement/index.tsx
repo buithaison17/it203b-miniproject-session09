@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 
-import { useAppSelector, useAppDispatch } from "../../../stores/store";
+import { useAppSelector, useAppDispatch } from "../../../hooks/CustomHook";
 import {
   fetchStationsThunk,
   addStationThunk,
