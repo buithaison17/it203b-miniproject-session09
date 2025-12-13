@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/CustomHook";
 import { featSchedule } from "../../apis/schedule.api";
 import { featRoutes } from "../../apis/routes.api";
 import { filterScheduleData, setRoutesId } from "../../stores/searchSlice";
+import { fetchSimpleBusesThunk } from "../../apis/bus.api";
 
 export default function BookingScreen() {
   //redux
@@ -18,7 +19,9 @@ export default function BookingScreen() {
   const { routes, status: routesStatus } = useAppSelector(
     (state) => state.routes
   );
-  const { buses } = useAppSelector((state) => state.buses);
+  const { simpleBuses, loading: busLoading } = useAppSelector(
+    (state) => state.buses
+  );
   const { schedules, status: schedulesStatus } = useAppSelector(
     (state) => state.schedules
   );
@@ -31,7 +34,7 @@ export default function BookingScreen() {
 
   //fetch data
   const fetchData = async () => {
-    // await dispatch(fetchBusesThunk());
+    await dispatch(fetchSimpleBusesThunk());
     await dispatch(featSchedule());
     // dispatch ghế
     await dispatch(featRoutes());
@@ -47,16 +50,20 @@ export default function BookingScreen() {
   }, []);
 
   useEffect(() => {
-    if (routesStatus === "fulfilled" && schedulesStatus === "fulfilled") {
+    if (
+      routesStatus === "fulfilled" &&
+      busLoading === false &&
+      schedulesStatus === "fulfilled"
+    ) {
       setRoutesData(routes);
-      setBusesData(db.buses);
+      setBusesData(simpleBuses);
       setScheduleData(schedules);
       setSeatsData(db.seats);
     }
     filterData();
   }, [
     routes,
-    buses,
+    simpleBuses,
     schedules,
     routesData,
     busesData,
