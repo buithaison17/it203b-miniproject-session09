@@ -24,6 +24,8 @@ import SeatManager from "../admin/pages/SeatManagement";
 import RoutesManager from "../admin/pages/RoutesManagement";
 import SchedulesManager from "../admin/pages/SchedulesManagement";
 import BookingHistoryScreen from "../pages/BookingHistory/BookingHistory";
+import ProfileScreen from "../pages/Profile";
+import ReviewManagement from "../admin/pages/ReviewManagement";
 
 export const routers = createBrowserRouter([
   {
@@ -74,6 +76,10 @@ export const routers = createBrowserRouter([
       {
         path: "booking-history",
         element: <BookingHistoryScreen />,
+      },
+      {
+        path: "profile:id",
+        element: <ProfileScreen />,
       },
     ],
   },
@@ -130,6 +136,10 @@ export const routers = createBrowserRouter([
       {
         path: "routes",
         element: <RoutesManager />,
+      },
+      {
+        path: "review",
+        element: <ReviewManagement />,
       },
     ],
   },
