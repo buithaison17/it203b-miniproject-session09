@@ -38,11 +38,11 @@ export interface CancellationPolicies {
 }
 
 export interface Review {
-  review_id: string;       
-  user_id: string;        
-  bus_id: string;        
-  rating: number;          
-  review: string;        
-  created_at: string;    
-  updated_at: string;      
+  id: string;
+  user_id: string;
+  bus_id: string;
+  rating: number;
+  review: string;
+  created_at: string;
+  updated_at: string;
 }
