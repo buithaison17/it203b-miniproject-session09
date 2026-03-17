@@ -25,9 +25,4 @@ public class VehicleObserver implements Observer {
             System.out.println(vehicleName + " giảm tốc.");
         }
     }
-
-    @Override
-    public void update(TrafficLight light) {
-
-    }
 }
