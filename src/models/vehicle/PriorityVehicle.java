@@ -17,4 +17,15 @@ public class PriorityVehicle extends Vehicle {
     public void stop() {
         System.out.println("[Ambulance " + id + "] IGNORE RED LIGHT");
     }
+
+    @Override
+    public void update(String message) {
+        switch (message) {
+            case "RED":
+            case "GREEN":
+            case "YELLOW":
+                move();
+                break;
+        }
+    }
 }

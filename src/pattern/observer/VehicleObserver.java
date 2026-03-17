@@ -1,5 +1,7 @@
 package pattern.observer;
 
+import pattern.state.TrafficLight;
+
 public class VehicleObserver implements Observer {
 
     private String vehicleName;
@@ -22,5 +24,10 @@ public class VehicleObserver implements Observer {
         if (message.equals("YELLOW")) {
             System.out.println(vehicleName + " giảm tốc.");
         }
+    }
+
+    @Override
+    public void update(TrafficLight light) {
+
     }
 }
