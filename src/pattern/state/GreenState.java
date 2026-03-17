@@ -4,7 +4,17 @@ public class GreenState implements TrafficLightState {
 
     @Override
     public void handle(TrafficLight light) {
-        System.out.println("Đèn xanh - Xe được phép đi");
+
+        System.out.println(" Đèn XANH - Xe được phép đi");
+
+        light.notifyObservers("GREEN");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         light.setState(new YellowState());
     }
 
