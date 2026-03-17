@@ -4,7 +4,17 @@ public class RedState implements TrafficLightState {
 
     @Override
     public void handle(TrafficLight light) {
-        System.out.println("Đèn đỏ - Xe phải dừng lại");
+
+        System.out.println(" Đèn ĐỎ - Xe phải dừng");
+
+        light.notifyObservers("RED");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         light.setState(new GreenState());
     }
 
@@ -12,5 +22,4 @@ public class RedState implements TrafficLightState {
     public String getStateName() {
         return "RED";
     }
-
 }
