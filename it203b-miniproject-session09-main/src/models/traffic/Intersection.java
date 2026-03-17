@@ -26,6 +26,8 @@ public class Intersection {
     // Xe bắt đầu đi vào tiến hành thêm vào hàng đợi
     public void arrive(Vehicle vehicle) {
         try {
+            // Đăng ký vehicle làm observer của traffic light
+            trafficLight.attach(vehicle);
             // Thêm vào hàng chờ
             queue.put(vehicle);
             // Dừng đèn đỏ
