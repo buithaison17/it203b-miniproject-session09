@@ -28,7 +28,7 @@ public abstract class Vehicle implements Runnable, Observer {
 
     @Override
     public void update(TrafficLight light) {
-        if (light.getCurrentState().equals("RED")) {
+        if (light.getState().equals("RED")) {
             stop();
         } else {
             move();

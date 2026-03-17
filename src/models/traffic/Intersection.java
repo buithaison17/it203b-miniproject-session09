@@ -42,7 +42,7 @@ public class Intersection {
             // Lấy xe đầu hàng
             Vehicle head = queue.peek();
             // Kiểm tra đèn xanh
-            boolean isGreenLight = trafficLight.getCurrentState().equals("GREEN");
+            boolean isGreenLight = trafficLight.getState().equals("GREEN");
             // Kiểm tra xe ưu tiên
             boolean isPriority = vehicle.getPriority() == 1;
             // Đang đừng ở đầu hàng và đèn xanh hoặc là xe ưu tiên thì di chuyển
