@@ -26,8 +26,4 @@ public class TrafficLightObserver implements Observer {
         }
     }
 
-    @Override
-    public void update(TrafficLight light) {
-
-    }
 }
