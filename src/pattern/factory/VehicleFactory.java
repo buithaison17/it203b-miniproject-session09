@@ -4,22 +4,22 @@ import models.traffic.Intersection;
 import models.vehicle.*;
 
 import java.util.Random;
+import java.util.List;
 
 public class VehicleFactory {
 
     private static final Random rand = new Random();
 
     public static Vehicle createVehicle(String id, Intersection intersection) {
-        int type = rand.nextInt(3);
+
+        List<String> types = List.of("STANDARD", "PRIORITY");
+        String type = types.get(rand.nextInt(types.size()));
 
         switch (type) {
-            case 0:
+            case "STANDARD":
                 return new StandardVehicle(id, 40 + rand.nextInt(20), intersection);
 
-            case 1:
-                return new StandardVehicle(id, 30 + rand.nextInt(20), intersection);
-
-            case 2:
+            case "PRIORITY":
                 return new PriorityVehicle(id, 80 + rand.nextInt(20), intersection);
 
             default:

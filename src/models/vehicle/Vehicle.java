@@ -2,7 +2,6 @@ package models.vehicle;
 
 import models.traffic.Intersection;
 import pattern.observer.Observer;
-import pattern.state.TrafficLight;
 
 public abstract class Vehicle implements Runnable, Observer {
 
@@ -27,11 +26,13 @@ public abstract class Vehicle implements Runnable, Observer {
     }
 
     @Override
-    public void update(TrafficLight light) {
-        if (light.getState().equals("RED")) {
+    public void update(String message) {
+        if (message.equals("RED")) {
             stop();
-        } else {
+        } else if (message.equals("GREEN")) {
             move();
+        } else if (message.equals("YELLOW")) {
+            System.out.println("[" + id + "] slowing down...");
         }
     }
 

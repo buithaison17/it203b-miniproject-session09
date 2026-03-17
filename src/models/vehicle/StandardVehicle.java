@@ -17,4 +17,19 @@ public class StandardVehicle extends Vehicle {
     public void stop() {
         System.out.println("[Car " + id + "] STOPPED at red light");
     }
+
+    @Override
+    public void update(String message) {
+        switch (message) {
+            case "RED":
+                stop();
+                break;
+            case "GREEN":
+                move();
+                break;
+            case "YELLOW":
+                System.out.println("[Car " + id + "] slowing down...");
+                break;
+        }
+    }
 }

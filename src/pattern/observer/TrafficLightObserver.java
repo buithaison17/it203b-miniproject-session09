@@ -1,5 +1,7 @@
 package pattern.observer;
 
+import pattern.state.TrafficLight;
+
 public class TrafficLightObserver implements Observer {
 
     @Override
@@ -22,5 +24,10 @@ public class TrafficLightObserver implements Observer {
             default:
                 System.out.println("  Trạng thái đèn: " + message);
         }
+    }
+
+    @Override
+    public void update(TrafficLight light) {
+
     }
 }
